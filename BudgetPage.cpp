@@ -72,6 +72,7 @@ void BudgetPage::onExpenseChangedSlot(double oldExpense, double newExpense) {
         qDebug() << "Old expense:" << oldExpense << " new:" << newExpense << " new Total - " << totalExpenses;
     }
     totalExpensesLabel->setText("Total Expenses: $0" + QString::number(this->totalExpenses));
+    calculateRemainingBudget();
 }
 
 /*
