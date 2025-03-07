@@ -23,6 +23,31 @@ BudgetPage::BudgetPage(QWidget *parent)
 }
 
 /**
+ * saves data to json for offline
+ * @return JSON with the budget data
+ */
+QJsonObject BudgetPage::to_JSON() {
+    QJsonObject budgetJson;
+    budgetJson.insert("Budget Period", this->budgetLabel->text());
+    budgetJson.insert("Total Expenses", this->totalExpenses);
+    budgetJson.insert("Remaining Budget", this->remainingBudget);
+    budgetJson.insert("Budget", this->budget);
+    return budgetJson;
+}
+
+/**
+ * 
+ * @param budget JSON with the budget data (Budget-double)(Total Expenses-double)(Remaining Budget-double)(Budget Period- String)
+ */
+void BudgetPage::getJSONBudget(QJsonObject budget) {
+    this->budget = budget.value("Budget").toDouble();
+    this->totalExpenses = budget.value("Total Expenses").toDouble();
+    this->remainingBudget = budget.value("Remaining Budget").toDouble();
+    this->budgetPeriodLabel->setText(budget.value("Budget Period").toString());
+}
+
+
+/**
  * QT Slot to detect changes in the budget SpinBox
  * changes the budget variable and calculates new remaining budget
  * @param budget new budget
@@ -179,7 +204,7 @@ void BudgetPage::createExpensesSubPage() {
 }
 
 void BudgetPage::newExpense() {
-//     Expenses *expenses = new Expenses();
-//         connect(expenses, &Expenses::expenseChangedSignal, this, &BudgetPage::onExpenseChangedSlot);
-//
+    //     Expenses *expenses = new Expenses();
+    //         connect(expenses, &Expenses::expenseChangedSignal, this, &BudgetPage::onExpenseChangedSlot);
+    //
 }

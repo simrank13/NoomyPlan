@@ -11,6 +11,7 @@
 #include<QScrollArea>
 #include <QObject>
 #include <QListWidget>
+#include <QJsonObject>
 #include "Expenses.h"
 
 #define SHOW_DEBUG_LOGS true
@@ -21,6 +22,8 @@ class BudgetPage : public QMainWindow {
     // Q_OBJECT
 public:
     explicit BudgetPage(QWidget *parent = nullptr);
+    QJsonObject to_JSON();
+    void getJSONBudget(QJsonObject budget);
 
 private slots:
     void onBudgetChangeSlot(double budget);
