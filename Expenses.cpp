@@ -91,11 +91,6 @@ void Expenses::createExpenseUI(QWidget *parent, QVBoxLayout *vbox) {
     removeExpenseHbox = new QHBoxLayout(removeExpenseButtonWidget);
     removeExpenseButton = new QPushButton(tr("Remove"));
     connect(removeExpenseButton, &QPushButton::clicked, newExpenseWidget, &QWidget::deleteLater);
-    //  connect(removeExpenseButton, &QPushButton::clicked, [this]() {
-    //     emit expensesChangedSignal(this->price * this->quantity, 0.0);\
-    //     deleteLater();
-    // });
-
     //adds the remove button to the widget
     removeExpenseHbox->addWidget(removeExpenseButton);
     addexpenseLayout->addLayout(addExpenseForm);

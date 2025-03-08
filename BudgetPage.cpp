@@ -28,6 +28,7 @@ BudgetPage::BudgetPage(QWidget *parent)
  */
 QJsonObject BudgetPage::to_JSON() {
     QJsonObject budgetJson;
+    budgetJson.insert("Time", QTime::currentTime().toString());
     budgetJson.insert("Budget Period", this->budgetLabel->text());
     budgetJson.insert("Total Expenses", this->totalExpenses);
     budgetJson.insert("Remaining Budget", this->remainingBudget);
