@@ -1,0 +1,24 @@
+Date,Transaction ID,Type,Description,Amount ($),Payment Method,Category
+2024-02-04,TXN001,Misc. Income,Misc. Income Transaction 1,913.34,Credit Card,Other Income
+2024-03-12,TXN002,Loan Payment,Loan Payment Transaction 2,3556.64,Bank Transfer,Debt Repayment
+2024-02-24,TXN003,Inventory Purchase,Inventory Purchase Transaction 3,22.94,Cash,Inventory
+2024-02-18,TXN004,Loan Payment,Loan Payment Transaction 4,1226.87,Bank Deposit,Debt Repayment
+2024-01-12,TXN005,Expense,Expense Transaction 5,2777.3,Credit Card,Operating Expense
+2024-01-25,TXN006,Sale,Sale Transaction 6,1744.72,Bank Transfer,Revenue
+2024-03-15,TXN007,Loan Payment,Loan Payment Transaction 7,2551.19,PayPal,Debt Repayment
+2024-03-25,TXN008,Loan Payment,Loan Payment Transaction 8,1204.93,Cash,Debt Repayment
+2024-02-04,TXN009,Expense,Expense Transaction 9,1393.12,Bank Deposit,Operating Expense
+2024-02-18,TXN010,Misc. Income,Misc. Income Transaction 10,3676.72,Bank Transfer,Other Income
+2024-03-03,TXN011,Inventory Purchase,Inventory Purchase Transaction 11,1537.01,Bank Deposit,Inventory
+2024-02-07,TXN012,Sale,Sale Transaction 12,2905.31,PayPal,Revenue
+2024-03-20,TXN013,Bank Fee,Bank Fee Transaction 13,371.51,Credit Card,Banking Expense
+2024-01-07,TXN014,Tax Payment,Tax Payment Transaction 14,3191.03,Bank Deposit,Tax
+2024-03-23,TXN015,Misc. Income,Misc. Income Transaction 15,2653.42,Bank Transfer,Other Income
+2024-02-24,TXN016,Tax Payment,Tax Payment Transaction 16,347.29,PayPal,Tax
+2024-03-23,TXN017,Tax Payment,Tax Payment Transaction 17,4450.64,Bank Deposit,Tax
+2024-03-20,TXN018,Bank Fee,Bank Fee Transaction 18,4486.59,Cash,Banking Expense
+2024-02-26,TXN019,Loan Payment,Loan Payment Transaction 19,4651.73,Bank Deposit,Debt Repayment
+2024-03-21,TXN020,Inventory Purchase,Inventory Purchase Transaction 20,3713.43,Bank Transfer,Inventory
+2024-02-16,TXN021,Refund,Refund Transaction 21,2337.35,Credit Card,Refunds & Returns
+2024-01-15,TXN022,Refund,Refund Transaction 22,1713.26,PayPal,Refunds & Returns
+2024-01-30,TXN023,Bank Fee,Bank Fee Transaction 23,390.59,Credit Card,Banking Expense
