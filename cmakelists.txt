@@ -1,0 +1,41 @@
+cmake_minimum_required(VERSION 3.30)
+project(noomyplan)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+find_package(Qt6 COMPONENTS
+        Core
+        Gui
+        Widgets
+        Charts
+        REQUIRED)
+include_directories(.)
+        
+add_executable(noomyplan 
+    main.cpp
+    financialreport.cpp
+    loginpage.cpp
+    user.cpp
+    cashflowtracking.cpp
+    authenticatesystem.cpp
+    budgetpage.cpp
+    budgetpagebudget.cpp
+    budgetpageexpenses.cpp
+    
+    financialreport.h
+    loginpage.h
+    user.h
+    cashflowtracking.h
+    authenticatesystem.h
+    budgetpage.h
+    budgetpagebudget.h
+    budgetpageexpenses.h
+)
+target_link_libraries(untitled1
+        Qt::Core
+        Qt::Gui
+        Qt::Widgets
+        Qt::Charts
+)

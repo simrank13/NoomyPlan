@@ -1,21 +1,26 @@
-QT       += core widgets gui
-TARGET = noomyplan
-SOURCES += main.cpp \
+QT       += core widgets gui charts
+SOURCES += \
+    main.cpp \
     BudgetPage.cpp \
-    expense.cpp\
-    expense.cpp\
-    financialreport.cpp\
- 	loginpage.cpp\
-	user.cpp\
-	cashflowtracking.cpp\
-	authenticatesystem.cpp\
-HEADERS += BudgetPage.h \
-    expense.h\
-	financialreport.h\
-	loginpage.h\
-	user.h\
-	cashflowtracking.h\
-	authenticatesystem.h\
+    budgetpageexpenses.cpp \
+    budgetpagebudget.cpp
+    financialreport.cpp \
+    loginpage.cpp \
+    user.cpp \
+    cashflowtracking.cpp \
+    authenticatesystem.cpp
+
+HEADERS += \
+    BudgetPage.h \
+    expense.h \
+    financialreport.h \
+    loginpage.h \
+    user.h \
+    cashflowtracking.h \
+    authenticatesystem.h \
+    budgetpage.h \
+    budgetpagebudget.h \
+    budgetpageexpenses.h
 
 
 # Default rules for deployment.
