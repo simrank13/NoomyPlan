@@ -20,11 +20,8 @@ BudgetPage::BudgetPage(QWidget *parent)
     centralWidget = new QWidget(parent);
     budgetLayout = new QGridLayout(centralWidget);
     setCentralWidget(centralWidget);
-    const QStringList BudgetPage::barChart_categories_Quarterly = {"Q1", "Q2", "Q3", "Q4"};
-    const QStringList BudgetPage::barChart_categories_Monthly = {
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    };
+
+
     createBudgetPeriodSelector();
     createBudgetSelector();
     createExpensesSubPage();
@@ -288,7 +285,7 @@ void BudgetPage::createBudgetSelector() {
  * @author - Katherine R
  */
 void BudgetPage::createExpensesSubPage() {
-    //expenses plan
+    //creates a group and vbox for the expense plan area
     expenses_Group = new QGroupBox(tr("Expense Plan"));
     expenses_vbox = new QVBoxLayout;
     expenses_addExpenseButton = new QPushButton(tr("Add Expense"), this);
@@ -297,21 +294,19 @@ void BudgetPage::createExpensesSubPage() {
     expenses_vbox->addWidget(expenses_remainingBudgetLabel);
     expenses_vbox->addWidget(expenses_totalExpensesLabel);
     expenses_vbox->addWidget(expenses_addExpenseButton);
-    // creates a scroll area for the list of expenses
+    // creates a scroll area for the list of expenses for every budgetpage, then hides and disables them
     for (BudgetPageBudget *budget: budgets) {
         expenses_vbox->addWidget(budget->getExpensescrollarea());
         budget->getExpensescrollarea()->hide();
         budget->getExpensescrollarea()->setDisabled(true);
     }
+    //shows/enables the current budget page's expenses scroll area
     budgets[budgetPeriodIndex]->getExpensescrollarea()->show();
     budgets[budgetPeriodIndex]->getExpensescrollarea()->setDisabled(false);
 
     expenses_Group->setLayout(expenses_vbox);
-
-
+    //connects the add button to newExpense
     connect(expenses_addExpenseButton, &QPushButton::clicked, this, &BudgetPage::newExpense);
-
-
     budgetLayout->addWidget(expenses_Group);
 }
 
@@ -323,10 +318,12 @@ void BudgetPage::createExpensesSubPage() {
 void BudgetPage::changeBudgetPage() {
     if (this->budgetPeriodIndex >= 0 && this->budgetPeriodIndex <= 17) {
         qDebug() << "Changed budget page";
+        //changes budget setter spinbox to the value of the changed page
         budgetSelector_SpinBox->setValue(budgets[budgetPeriodIndex]->getBudget());
+        //changes the total expenses text to the value of the changed page
         expenses_totalExpensesLabel->setText(
             "Total Expenses: $0" + QString::number(budgets.at(budgetPeriodIndex)->getTotalExpenses()));
-
+        //shows new expense area
         budgets[budgetPeriodIndex]->getExpensescrollarea()->show();
         budgets[budgetPeriodIndex]->getExpensescrollarea()->setDisabled(false);
         calculateRemainingBudget();
@@ -342,12 +339,14 @@ void BudgetPage::changeBudgetPage() {
   * @author - Katherine R
  */
 void BudgetPage::newExpense() {
+    //adds a new expense object to the current budget page
     budgets[budgetPeriodIndex]->getExpenses()->append(new BudgetPageExpenses());
     BudgetPageExpenses *tempExpense = budgets[budgetPeriodIndex]->getExpenses()->last();
     // //connects signal to know when expense is changed
     connect(tempExpense, &BudgetPageExpenses::expenseChangedSignal, this, &BudgetPage::onExpenseChangedSlot);
+    //creates the expense UI and adds it to the budget page's vbox
     tempExpense->createExpenseUI(this, budgets[budgetPeriodIndex]->getExpensesscrolllistvbox());
-    //connects the expense button to delete
+    //connects the remove expense button to deleteExpense,
     connect(tempExpense->getRemoveButton(), &QPushButton::clicked, this,
             [this, tempExpense]() {
                 deleteExpense(tempExpense);
@@ -362,11 +361,14 @@ void BudgetPage::newExpense() {
   * @author - Katherine R
  */
 void BudgetPage::deleteExpense(BudgetPageExpenses *toDelete) {
+   //gets index of expense to delete
     long long index = budgets[budgetPeriodIndex]->getExpenses()->indexOf(toDelete);
+    //gets the the expense value of the object to be deleted
     double tempExpenseTotal = budgets[budgetPeriodIndex]->getExpenses()->at(index)->getExpense();
+    //deletes object, then removes it from the budget page's QVector
     budgets[budgetPeriodIndex]->getExpenses()->at(index)->deleteLater();
     budgets[budgetPeriodIndex]->getExpenses()->removeAt(index);
-    onExpenseChangedSlot(-tempExpenseTotal);
+    onExpenseChangedSlot(-tempExpenseTotal);//removes from total expenses
 }
 
 
@@ -377,11 +379,18 @@ void BudgetPage::deleteExpense(BudgetPageExpenses *toDelete) {
   * @author - Katherine R
  */
 void BudgetPage::updateBarGraph() {
+     //creates new qwidget, hbox
     barChart_Widget = new QWidget();
     barChart_GroupVbox = new QHBoxLayout();
     barChart_Widget->setLayout(barChart_GroupVbox);
+    //creates new QBarset and QStringList for labeling X axis(necessary for updating graph)
     barChart_Value = new QBarSet("Remaining Budget");
     barChart_Neg = new QBarSet("Remaining Budget");
+    const QStringList BudgetPage::barChart_categories_Quarterly = {"Q1", "Q2", "Q3", "Q4"};
+    const QStringList BudgetPage::barChart_categories_Monthly = {
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    };
     barChart_xAxis = new QBarCategoryAxis;
     int rangelow;
     int rangehigh;
@@ -412,14 +421,18 @@ void BudgetPage::updateBarGraph() {
             *barChart_Neg<<((qreal)0);
         }
     }
+    //sets the colors for the bar chart bars
     barChart_Value->setColor(Qt::black);
     barChart_Neg->setColor(QColor(97, 24, 8));
+    //adds values to the series
     barChart_series = new QStackedBarSeries;
     barChart_series->append(barChart_Value);
     barChart_series->append(barChart_Neg);
+    //creates the chart and adds the series(values)
     barChart_chart = new QChart();
     barChart_chart->addSeries(barChart_series);
     barChart_chart->setTitle("Budget Graph");;
+    //adds x and y axis
     barChart_chart->addAxis(barChart_xAxis, Qt::AlignBottom);
     barChart_series->attachAxis(barChart_xAxis);
     barChart_yAxis = new QValueAxis;
@@ -427,7 +440,7 @@ void BudgetPage::updateBarGraph() {
     barChart_chart->addAxis(barChart_yAxis, Qt::AlignLeft);
     barChart_series->attachAxis(barChart_yAxis);
     barChart_chart->legend()->setVisible(false);
-    // barChart_chart->legend()->setAlignment(Qt::AlignBottom);
+    //creates chartview and adds to layout
     barChart_chartView = new QChartView(barChart_chart);
     barChart_chartView->setLayout(barChart_GroupVbox);
     barChart_GroupVbox->setAlignment(Qt::AlignRight);

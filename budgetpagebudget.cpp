@@ -72,6 +72,7 @@ BudgetPageBudget::BudgetPageBudget(QObject *parent, const QJsonObject &json) : Q
     this->totalExpenses = json.value("Total Expenses").toDouble();
     this->remainingBudget = json.value("Remaining Budget").toDouble();
     this->budgetIndex = json.value("Index").toInt();
+    //splits Expenses into JSON array, then adds them
     QJsonArray expensesArray = json.value("Expenses").toArray();
     for (QJsonValue expense: expensesArray) {
         this->expenses.append(new BudgetPageExpenses(this, expense.toObject()));
@@ -180,13 +181,14 @@ void BudgetPageBudget::changeTotalExpenses(double delta) {
 QJsonObject BudgetPageBudget::to_JSON() {
     QJsonObject jsonDoc;
     QJsonArray expensesArray;
-    for (BudgetPageExpenses *expense: this->expenses) {
+    for (BudgetPageExpenses *expense: this->expenses) {//adds expenses to a QJSonarray
         expensesArray.append(expense->to_JSON());
     }
+    //adds the other variables
     jsonDoc.insert("Budget", this->budget);
     jsonDoc.insert("Total Expenses", this->totalExpenses);
     jsonDoc.insert("Remaining Budget", this->remainingBudget);
-    jsonDoc.insert("Expenses", expensesArray);
+    jsonDoc.insert("Expenses", expensesArray);//adds expenses jsonarray
     jsonDoc.insert("Index", this->budgetIndex);
     return jsonDoc;
 }

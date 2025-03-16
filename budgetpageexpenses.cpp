@@ -147,6 +147,7 @@ void BudgetPageExpenses::onExpenseDescriptionChangedSlot(const QString &newDescr
  */
 void BudgetPageExpenses::expenseSBChangedSlot(double change, char changedType) {
     double oldExpenses = this->quantity * this->price;
+    //determines the type that was changed (price or quantity)
     switch (changedType) {
         case 'Q':
             this->quantity = change;
