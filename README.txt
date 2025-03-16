@@ -15,11 +15,14 @@ step 1:
 find /usr -name "moc"
 
 
-step 2: 
+step 2a: 
 
-rm moc_budgetpage.cpp moc_expenses.cpp
-/usr/lib/qt6/libexec/moc budgetpage.h -o moc_budgetpage.cpp
-/usr/lib/qt6/libexec/moc expenses.h -o moc_expenses.cpp
+rm moc_budgetpage.cpp moc_budgetpageexpenses.cpp
+
+step 2b:
+
+/usr/lib/qt6/libexec/moc budgetpagebudget.h -o moc_budgetpagebudget.cpp
+/usr/lib/qt6/libexec/moc budgetpageexpenses.h -o moc_budgetpageexpenses.cpp
 
 
 step 3: 
@@ -28,7 +31,7 @@ g++ -std=c++17 -I/usr/include/x86_64-linux-gnu/qt6 \
     -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets \
     -I/usr/include/x86_64-linux-gnu/qt6/QtCore \
     -I/usr/include/x86_64-linux-gnu/qt6/QtGui -fPIC \
-    -c budgetpage.cpp -o budgetpage.o
+    -c budgetpagebudget.cpp -o budgetpagebudget.o
 
 
 step 4:
@@ -37,7 +40,7 @@ g++ -std=c++17 -I/usr/include/x86_64-linux-gnu/qt6 \
     -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets \
     -I/usr/include/x86_64-linux-gnu/qt6/QtCore \
     -I/usr/include/x86_64-linux-gnu/qt6/QtGui -fPIC \
-    -c moc_budgetpage.cpp -o moc_budgetpage.o
+    -c moc_budgetpagebudget.cpp -o moc_budgetpagebudget.o
 
 
 step 5:
@@ -98,7 +101,7 @@ step 5:
 
     step 5g:
 
-    g++ -std=c++17 -c expenses.cpp -o expenses.o \
+    g++ -std=c++17 -c budgetpageexpenses.cpp -o budgetpageexpenses.o \
     -I/usr/include/x86_64-linux-gnu/qt6 \
     -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets \
     -I/usr/include/x86_64-linux-gnu/qt6/QtCore \
@@ -107,25 +110,17 @@ step 5:
 
     step 5h:
 
-    g++ -std=c++17 -c budgetpage.cpp -o budgetpage.o \
+    g++ -std=c++17 -c budgetpagebudget.cpp -o budgetpagebudget.o
     -I/usr/include/x86_64-linux-gnu/qt6 \
     -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets \
     -I/usr/include/x86_64-linux-gnu/qt6/QtCore \
-    -I/usr/include/x86_64-linux-gnu/qt6/QtGui \
-    -fPIC
-
-    step 5i:
-
-    g++ -std=c++17 -c moc_budgetpage.cpp -o moc_budgetpage.o \
-    -I/usr/include/x86_64-linux-gnu/qt6 \
-    -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets \
-    -I/usr/include/x86_64-linux-gnu/qt6/QtCore \
-    -I/usr/include/x86_64-linux-gnu/qt6/QtGui \
-    -fPIC
+    -I/usr/include/x86_64-linux-gnu/qt6/QtGui 
+    -fPIC 
+    
 
     step 5j:
 
-    g++ -std=c++17 -c moc_expenses.cpp -o moc_expenses.o \
+    g++ -std=c++17 -c moc_budgetpagebudget.cpp -o moc_budgetpagebudget.o \
     -I/usr/include/x86_64-linux-gnu/qt6 \
     -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets \
     -I/usr/include/x86_64-linux-gnu/qt6/QtCore \
@@ -134,9 +129,18 @@ step 5:
 
     step 5k:
 
+    g++ -std=c++17 -c moc_budgetpageexpenses.cpp -o moc_budgetpageexpenses.o \
+    -I/usr/include/x86_64-linux-gnu/qt6 \
+    -I/usr/include/x86_64-linux-gnu/qt6/QtWidgets \
+    -I/usr/include/x86_64-linux-gnu/qt6/QtCore \
+    -I/usr/include/x86_64-linux-gnu/qt6/QtGui \
+    -fPIC
+
+    step 5l:
+
     g++ -std=c++17 -o NoomyPlan \
-    main.o user.o authenticatesystem.o loginpage.o financialreport.o cashflowtracking.o \
-    budgetpage.o expenses.o moc_budgetpage.o moc_expenses.o \
+    main.o user.o authenticatesystem.o loginpage.o financialreport.o cashflowtracking.o budgetpagebudget.o \
+    budgetpage.o budgetpageexpenses.o moc_budgetpage.o moc_budgetpageexpenses.o \
     -L/usr/lib/x86_64-linux-gnu \
     -lQt6Widgets -lQt6Core -lQt6Gui -lQt6Network -lQt6Sql -fPIC
 

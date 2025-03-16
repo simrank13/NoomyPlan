@@ -2,110 +2,92 @@
 #define BUDGETPAGE_H
 
 #include <QMainWindow>
+#include <QWidget>
 #include <QGridLayout>
+#include <QVBoxLayout>
+#include <QGroupBox>
 #include <QLabel>
-#include<QGroupBox>
-#include <QListWidget>
-#include <QtCharts/QBarSet>
-#include <QtCharts/QChartview>
-#include <QtCharts/QStackedBarSeries>
-#include <QtCharts/QChart>
-#include <QtCharts/QBarCategoryAxis>
-#include <QtCharts/QValueAxis>
-// #include<QDebug>
-// #include<QWidget>
-// #include<QScrollArea>s
-// #include <QObject>
-// #include <QJsonObject>
-// #include <QPushButton>
-// #include <QJsonArray>
-#include "BudgetPageExpenses.h"
+#include <QComboBox>
+#include <QDoubleSpinBox>
+#include <QPushButton>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QChart>
+#include <QChartView>
+#include <QBarSet>
+#include <QStackedBarSeries>
+#include <QBarCategoryAxis>
+#include <QValueAxis>
 #include "budgetpagebudget.h"
-
-#define SHOW_DEBUG_LOGS true
+#include "budgetpageexpenses.h"
 
 class BudgetPage : public QMainWindow {
     Q_OBJECT
 
 public:
     explicit BudgetPage(QWidget *parent = nullptr);
-
+    ~BudgetPage();
     QJsonObject to_JSON();
-
     void getJSONBudget(const QJsonObject &budget);
 
-    ~BudgetPage();
-
-private slots:
+public slots:
     void onBudgetChangeSlot(double budget);
-
     void onExpenseChangedSlot(double delta);
-
     void onBudgetPeriodTypeChangedSlot(int index);
-
     void onBudgetPeriodChangeSlot(int index, char period);
-
+    void calculateRemainingBudget();
+    void createBudgetPeriodSelector();
+    void createBudgetSelector();
+    void createExpensesSubPage();
+    void changeBudgetPage();
     void newExpense();
-
     void deleteExpense(BudgetPageExpenses *toDelete);
-
     void updateBarGraph();
 
-
-signals:
-
 private:
-    QWidget *centralWidget;
-    QGridLayout *budgetLayout;
-
-    QVBoxLayout *budgetSelector_VBox{};
-    QGroupBox *budgetSelector_group{};
-    QDoubleSpinBox *budgetSelector_SpinBox{};
-    QLabel *budgetSelector_Label{};
-
-    QGroupBox *expenses_Group{};
-    QVBoxLayout *expenses_vbox{};
-    QLabel *expenses_totalExpensesLabel{};
-    QLabel *expenses_remainingBudgetLabel{};
-    QPushButton *expenses_addExpenseButton{};
-
-    QLabel *budgetPeriod_Label{};
+    // Budget period selector
+    QGroupBox *budgetPeriod_GroupBox;
+    QLabel *budgetPeriod_Label;
+    QComboBox *budgetPeriod_TypeComboBox;
+    QVBoxLayout *budgetPeriod_Vbox;
     QComboBox *budgetPeriod_QuarterlyComboBox;
-    QVBoxLayout *budgetPeriod_Vbox{};
-    QGroupBox *budgetPeriod_GroupBox{};
-    QComboBox *budgetPeriod_TypeComboBox{};
     QComboBox *budgetPeriod_MonthlyComboBox;
 
-    QVector<BudgetPageBudget *> budgets;
-    int budgetPeriodIndex;
+    // Budget selector
+    QGroupBox *budgetSelector_group;
+    QLabel *budgetSelector_Label;
+    QDoubleSpinBox *budgetSelector_SpinBox;
+    QVBoxLayout *budgetSelector_VBox;
 
+    // Expenses subpage
+    QGroupBox *expenses_Group;
+    QVBoxLayout *expenses_vbox;
+    QPushButton *expenses_addExpenseButton;
+    QLabel *expenses_remainingBudgetLabel;
+    QLabel *expenses_totalExpensesLabel;
+
+    // Bar graph
     QWidget *barChart_Widget;
     QHBoxLayout *barChart_GroupVbox;
     QBarSet *barChart_Value;
     QBarSet *barChart_Neg;
+    QBarCategoryAxis *barChart_xAxis;
     QStackedBarSeries *barChart_series;
     QChart *barChart_chart;
     QValueAxis *barChart_yAxis;
-    QBarCategoryAxis *barChart_xAxis;
     QChartView *barChart_chartView;
-    QStringList const barChart_categories_Quarterly{"Q1", "Q2", "Q3", "Q4"};
-    QStringList const barChart_categories_Monthly{
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    };
     QPushButton *barGraph_updateButton;
 
+    // Core members
+    QVector<BudgetPageBudget *> budgets;
+    int budgetPeriodIndex;
+    QWidget *centralWidget;
+    QGridLayout *budgetLayout;
 
-    void calculateRemainingBudget();
-
-    void createBudgetPeriodSelector();
-
-    void createBudgetSelector();
-
-    void createExpensesSubPage();
-
-    void changeBudgetPage();
+    // Static data for bar chart
+    static const QStringList barChart_categories_Quarterly;
+    static const QStringList barChart_categories_Monthly;
+    // Removed: static const bool SHOW_DEBUG_LOGS = true;  // Now using macro from budgetpageexpenses.h
 };
 
 #endif // BUDGETPAGE_H
-
-//https://doc.qt.io/qt-6/qtcharts-stackedbarchart-example.html

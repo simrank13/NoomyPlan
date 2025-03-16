@@ -1,4 +1,4 @@
-#include "BudgetPageExpenses.h"
+#include "budgetpageexpenses.h"
 
 /**
  *default constructor for expenses
@@ -116,7 +116,7 @@ double BudgetPageExpenses::getExpense() const {
  * @param newName the new name for the expense
  */
 void BudgetPageExpenses::onExpenseNameChangedSlot(const QString &newName) const {
-    expenseName->assign(newName);
+    *expenseName = newName;
     if (SHOW_DEBUG_LOGS) {
         qDebug() << "New Expense Name - " << *this->expenseName;
     }
@@ -127,7 +127,7 @@ void BudgetPageExpenses::onExpenseNameChangedSlot(const QString &newName) const 
  * @param newDescription the new description
  */
 void BudgetPageExpenses::onExpenseDescriptionChangedSlot(const QString &newDescription) const {
-    expenseDescription->assign(newDescription);
+    *expenseDescription = newDescription;
     if (SHOW_DEBUG_LOGS) {
         qDebug() << *this->expenseName << " - New Expense Description - " << *this->expenseDescription;
     }

@@ -1,5 +1,12 @@
 #include "budgetpage.h"
+#include <QDebug>
 
+// Define static members declared in budgetpage.h
+const QStringList BudgetPage::barChart_categories_Quarterly = {"Q1", "Q2", "Q3", "Q4"};
+const QStringList BudgetPage::barChart_categories_Monthly = {
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+};
 
 /**
  * @param parent default constructor for the budget page
@@ -56,7 +63,6 @@ void BudgetPage::getJSONBudget(const QJsonObject &budget) {
     this->budgetPeriod_Label->setText(budget.value("Budget Period").toString());
 }
 
-
 /**
  * QT Slot to detect changes in the budget SpinBox
  * \n changes the budget variable and calculates new remaining budget
@@ -69,7 +75,6 @@ void BudgetPage::onBudgetChangeSlot(double budget) {
     }
     calculateRemainingBudget();
 }
-
 
 /**
  * QT Slot to detect changes in Expense object

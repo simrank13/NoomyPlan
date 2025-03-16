@@ -2,7 +2,7 @@
 #define BUDGETPAGEBUDGET_H
 
 #include <QObject>
-#include <BudgetPageExpenses.h>
+#include "budgetpageexpenses.h"
 #include <QVector>
 #include <QJsonArray>
 #include <QJsonObject>
