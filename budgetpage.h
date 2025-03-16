@@ -87,7 +87,6 @@ private:
     // Static data for bar chart
     static const QStringList barChart_categories_Quarterly;
     static const QStringList barChart_categories_Monthly;
-    // Removed: static const bool SHOW_DEBUG_LOGS = true;  // Now using macro from budgetpageexpenses.h
 };
 
 #endif // BUDGETPAGE_H

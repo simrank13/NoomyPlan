@@ -1,18 +1,16 @@
 QT       += core widgets gui charts
-SOURCES += \
-    main.cpp \
+
+SOURCES += main.cpp \
     BudgetPage.cpp \
     budgetpageexpenses.cpp \
-    budgetpagebudget.cpp
+    budgetpagebudget.cpp \
     financialreport.cpp \
     loginpage.cpp \
     user.cpp \
     cashflowtracking.cpp \
     authenticatesystem.cpp
 
-HEADERS += \
-    BudgetPage.h \
-    expense.h \
+HEADERS += BudgetPage.h \
     financialreport.h \
     loginpage.h \
     user.h \

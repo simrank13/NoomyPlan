@@ -1,15 +1,11 @@
 #include "budgetpage.h"
 #include <QDebug>
 
-// Define static members declared in budgetpage.h
-const QStringList BudgetPage::barChart_categories_Quarterly = {"Q1", "Q2", "Q3", "Q4"};
-const QStringList BudgetPage::barChart_categories_Monthly = {
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-};
 
 /**
- * @param parent default constructor for the budget page
+* @brief default constructor for the budget page
+ * @param parent 
+ * @author - Katherine R
  */
 BudgetPage::BudgetPage(QWidget *parent)
     : QMainWindow(parent) {
@@ -24,7 +20,11 @@ BudgetPage::BudgetPage(QWidget *parent)
     centralWidget = new QWidget(parent);
     budgetLayout = new QGridLayout(centralWidget);
     setCentralWidget(centralWidget);
-
+    const QStringList BudgetPage::barChart_categories_Quarterly = {"Q1", "Q2", "Q3", "Q4"};
+    const QStringList BudgetPage::barChart_categories_Monthly = {
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    };
     createBudgetPeriodSelector();
     createBudgetSelector();
     createExpensesSubPage();
@@ -38,6 +38,7 @@ BudgetPage::BudgetPage(QWidget *parent)
  * saves data of the budget page for offline mode
  * @return JSON with the budget data
  * \n @copydoc BudgetPageBudget::to_JSON()
+  * @author - Katherine R
  */
 QJsonObject BudgetPage::to_JSON() {
     QJsonArray budgetJson;
@@ -67,6 +68,7 @@ void BudgetPage::getJSONBudget(const QJsonObject &budget) {
  * QT Slot to detect changes in the budget SpinBox
  * \n changes the budget variable and calculates new remaining budget
  * @param budget new budget
+ * @author - Katherine R
  */
 void BudgetPage::onBudgetChangeSlot(double budget) {
     this->budgets[budgetPeriodIndex]->setBudget(budget);
@@ -80,6 +82,7 @@ void BudgetPage::onBudgetChangeSlot(double budget) {
  * QT Slot to detect changes in Expense object
  * \n then calculates the new total and remaining budget
  * @param delta - change in expense
+ * @author - Katherine R
  */
 void BudgetPage::onExpenseChangedSlot(double delta) {
     budgets[budgetPeriodIndex]->changeTotalExpenses(delta);
@@ -95,6 +98,7 @@ void BudgetPage::onExpenseChangedSlot(double delta) {
  *Slot for when the user changes the budget period type (monthly , quarterly, yearly)
  *\n then changes the text for the budget spinbox
  *\n and swaps the budgets to the selected one
+ * @author - Katherine R
  */
 void BudgetPage::onBudgetPeriodTypeChangedSlot(int index) {
     barChart_xAxis->clear();
@@ -144,6 +148,7 @@ void BudgetPage::onBudgetPeriodTypeChangedSlot(int index) {
  * changes the budget object when another budget period is selected I.E (jan, feb, Q1..)
  * @param index index of changed Combobox
  * @param period M for monthly Q for quarterly
+ * @author - Katherine R
  */
 void BudgetPage::onBudgetPeriodChangeSlot(int index, char period) {
     QString labelText;
@@ -178,7 +183,8 @@ void BudgetPage::onBudgetPeriodChangeSlot(int index, char period) {
 
 
 /**
- * calculates the remaining budget
+ * calculates the remaining budget for budgets[budgetPeriodIndex]
+ * @author - Katherine R
  */
 void BudgetPage::calculateRemainingBudget() {
     budgets[budgetPeriodIndex]->setRemainingBudget(
@@ -194,6 +200,7 @@ void BudgetPage::calculateRemainingBudget() {
  * creates the budget period selector widget
  * \n allows selection of budget period (Monthly, Yearly, Quarterly) for BudgetPage
  * \n and (Q1-Q4) (jan-dec)
+ * @author - Katherine R
  */
 void BudgetPage::createBudgetPeriodSelector() {
     //adds the option to select the budget period
@@ -249,6 +256,7 @@ void BudgetPage::createBudgetPeriodSelector() {
 /**
  * creates a budget selector for BudgetPage
  * \n uses a spinbox to set the budget
+  * @author - Katherine 
  */
 void BudgetPage::createBudgetSelector() {
     //spinbox to set the budget
@@ -276,6 +284,7 @@ void BudgetPage::createBudgetSelector() {
  * creates a scrollable, dynamic list of expenses
  * \n can set the name, desc, price, and count
  * \n calculates total and remaining budget automatically
+ * @author - Katherine R
  */
 void BudgetPage::createExpensesSubPage() {
     //expenses plan
@@ -308,6 +317,7 @@ void BudgetPage::createExpensesSubPage() {
 /**
  *Changes the budget page variables to the new budget period
  * \n as many UI elements as possible are renamed instead of replaced
+  * @author - Katherine R
  */
 void BudgetPage::changeBudgetPage() {
     if (this->budgetPeriodIndex >= 0 && this->budgetPeriodIndex <= 17) {
@@ -328,6 +338,7 @@ void BudgetPage::changeBudgetPage() {
 
 /**
  * creates a new expense item, adds it to the budget object and adds GUI
+  * @author - Katherine R
  */
 void BudgetPage::newExpense() {
     budgets[budgetPeriodIndex]->getExpenses()->append(new BudgetPageExpenses());
@@ -347,6 +358,7 @@ void BudgetPage::newExpense() {
  * deletes the expense item provided, removes it from the expenses QVector
  * \n and calculates new total expense
  * @param toDelete expense item to delete
+  * @author - Katherine R
  */
 void BudgetPage::deleteExpense(BudgetPageExpenses *toDelete) {
     long long index = budgets[budgetPeriodIndex]->getExpenses()->indexOf(toDelete);
@@ -361,6 +373,7 @@ void BudgetPage::deleteExpense(BudgetPageExpenses *toDelete) {
  * "updates" the bar graph
  * \n trying to actually update the variables wouldn't work automatically,
  * \n so i decided to just add a button to "update" (create a new graph to replace)
+  * @author - Katherine R
  */
 void BudgetPage::updateBarGraph() {
     barChart_Widget = new QWidget();
@@ -371,6 +384,7 @@ void BudgetPage::updateBarGraph() {
     barChart_xAxis = new QBarCategoryAxis;
     int rangelow;
     int rangehigh;
+    //determines if it should display yearly/quarterly/monthly from current index
     if (budgetPeriodIndex == 0) {
         rangelow = 0;
         rangehigh = 0;
@@ -383,13 +397,18 @@ void BudgetPage::updateBarGraph() {
         rangehigh = 17;
         barChart_xAxis->append(barChart_categories_Monthly);
     }
+    //adds values from budgets to graph QBarset 
     for (int i = rangelow; i <= rangehigh; i++) {
         if (budgets.at(i)->getRemainingBudget() < 0) {
-            barChart_Neg->append(budgets.at(i)->getRemainingBudget());
-            barChart_Value->append(0);
+            // barChart_Neg->append((qreal)budgets.at(i)->getRemainingBudget());
+            // barChart_Value->append((qreal)0.0);
+            *barChart_Neg << (double) budgets.at(i)->getRemainingBudget();
+            *barChart_Value<< (qreal)0.0;
         } else {
-            barChart_Value->append(budgets.at(i)->getRemainingBudget());
-            barChart_Neg->append(0);
+            // barChart_Value->append((qreal)budgets.at(i)->getRemainingBudget());
+            // barChart_Neg->append((qreal)0);
+            *barChart_Value<<((qreal)budgets.at(i)->getRemainingBudget());
+            *barChart_Neg<<((qreal)0);
         }
     }
     barChart_Value->setColor(Qt::black);
@@ -416,6 +435,7 @@ void BudgetPage::updateBarGraph() {
 
 /**
  * destructor
+  * @author Katherine R
  */
 BudgetPage::~BudgetPage() {
     delete budgetSelector_SpinBox;
@@ -425,22 +445,22 @@ BudgetPage::~BudgetPage() {
     delete budgetPeriod_MonthlyComboBox;
     delete budgetSelector_VBox;
     delete budgetSelector_group;
-    delete budgetSelector_SpinBox;
-    delete budgetSelector_Label;
-    delete expenses_Group;
+    // delete budgetSelector_SpinBox;
+
     delete expenses_vbox;
     delete expenses_totalExpensesLabel;
     delete expenses_remainingBudgetLabel;
     delete expenses_addExpenseButton;
+    delete expenses_Group;
+
     budgets.clear();
     delete barChart_Widget;
-    delete barChart_GroupVbox;
-    delete barChart_Value;
-    delete barChart_Neg;
+    // delete barChart_Value;
+    // delete barChart_Neg;
     delete barChart_series;
-    delete barChart_chart;
     delete barChart_yAxis;
     delete barChart_xAxis;
+    delete barChart_chart;
     delete barChart_chartView;
     delete barGraph_updateButton;
-}
+    // delete barChart_GroupVbox;

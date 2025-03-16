@@ -1,8 +1,9 @@
 #include "budgetpagebudget.h"
 
 /**
- * default construtor, everything seet to 0.
+ * @brief default construtor, everything set to 0.
  * @param parent parent qobject
+  * @author Katherine R
  */
 BudgetPageBudget::BudgetPageBudget(QObject *parent)
     : QObject{parent} {
@@ -19,9 +20,10 @@ BudgetPageBudget::BudgetPageBudget(QObject *parent)
 }
 
 /**
- * parametrized construtor, everything set to 0, except index
+ * @brief parametrized construtor, everything set to 0, except index
  * @param parent parent qobject
  * @param budgetindex the index (0 = year, 1-5 = Q1-Q4, 6-18 = jan-dec) for to_JSON
+  * @author Katherine R
  */
 BudgetPageBudget::BudgetPageBudget(QObject *parent, int budgetindex)
     : QObject{parent} {
@@ -38,7 +40,7 @@ BudgetPageBudget::BudgetPageBudget(QObject *parent, int budgetindex)
 }
 
 /**
- * parametrized constructor
+ * @brief parametrized constructor 
  * @param parent parent qobject
  * @param budget budget
  * @param totalexpense total expenses
@@ -60,9 +62,10 @@ BudgetPageBudget::BudgetPageBudget(QObject *parent, double budget, double totale
 }
 
 /**
-* creates a budget object from QJSONobject
+* @brief parametized constructor - creates a budget object from QJSONobject
  * @param parent parent object
  * @param json
+  * @author Katherine R
  */
 BudgetPageBudget::BudgetPageBudget(QObject *parent, const QJsonObject &json) : QObject{parent} {
     this->budget = json.value("Budget").toDouble();
@@ -82,80 +85,89 @@ BudgetPageBudget::BudgetPageBudget(QObject *parent, const QJsonObject &json) : Q
 }
 
 /**
- * getter for budget
+ * @brief getter for budget
  * @return budget
+  * @author Katherine R
  */
 double BudgetPageBudget::getBudget() {
     return budget;
 }
 
 /**
- * getter for total expenses
+ * @brief getter for total expenses
  * @return total expenses
+  * @author Katherine R
  */
 double BudgetPageBudget::getTotalExpenses() {
     return totalExpenses;
 }
 
 /**
- *  getter for remaining budgets
+ *  @brief getter for remaining budgets
  * @return remaining budget
+  * @author Katherine R
  */
 double BudgetPageBudget::getRemainingBudget() {
     return remainingBudget;
 }
 
 /**
- * getter for expenses qvector
+ * @brief getter for expenses qvector
  * @return expenses qvector
+  * @author Katherine R
  */
 QVector<BudgetPageExpenses *> *BudgetPageBudget::getExpenses() {
     return &expenses;
 }
 
 /**
- * setter for budget
+ * @brief setter for budget
  * @param newbudget new budget
+  * @author Katherine R
  */
 void BudgetPageBudget::setBudget(double newbudget) {
     this->budget = newbudget;
 }
 
 /**
- * setter for total expense
+ * @brief setter for total expense
  * @param newtotalexpense
+  * @author Katherine R
  */
 void BudgetPageBudget::setTotalExpenses(double newtotalexpense) {
     totalExpenses = newtotalexpense;
 }
 
 /**
- * setter for remaining budget
+ * @brief setter for remaining budget
  * @param newremainingbudget
+  * @author Katherine R
  */
 void BudgetPageBudget::setRemainingBudget(double newremainingbudget) {
     remainingBudget = newremainingbudget;
 }
 
 /**
- *  setter for index
+ * @brief setter for index
  * @param index
+  * @author Katherine R
  */
 void BudgetPageBudget::setIndex(int index) {
     this->budgetIndex = index;
 }
 
 /**
- * changes total expenses by delta
+ * @brief changes total expenses by delta
  * \n new total =  old total + delta
  * @param delta the change
+  * @author Katherine R
  */
 void BudgetPageBudget::changeTotalExpenses(double delta) {
     this->totalExpenses += delta;
 }
 
 /**
- * Creates a json object of the budget object
+ * @brief Creates a json object of the budget object
  * @return json object
             \n "Budget" - the budget
             \n "Total Expenses" - the total expenses
@@ -163,6 +175,7 @@ void BudgetPageBudget::changeTotalExpenses(double delta) {
             \n "Expenses" an array with Expense::to_JSON()
             \n "Index" 0-18, the budget period (0-yearly) (1-5 Q1-Q4) (6-18 jan-dec)
  *          \n @copydoc BudgetPageExpenses::to_JSON()
+  * @author Katherine R
  */
 QJsonObject BudgetPageBudget::to_JSON() {
     QJsonObject jsonDoc;

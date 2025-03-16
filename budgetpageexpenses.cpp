@@ -1,8 +1,9 @@
 #include "budgetpageexpenses.h"
 
 /**
- *default constructor for expenses
+ * @brief default constructor for expenses
  * @param parent parent QObject if needed
+  * @author Katherine R
  */
 BudgetPageExpenses::BudgetPageExpenses(QObject *parent)
     : QObject{parent} {
@@ -24,12 +25,13 @@ BudgetPageExpenses::BudgetPageExpenses(QObject *parent)
 }
 
 /**
- * parametrized constructor for expenses
+ * @brief parametrized constructor for expenses
  * @param parent parent qobject
  * @param name name of expense
  * @param description description of the expense item
  * @param price price of expense
  * @param quantity # of items
+  * @author Katherine R
  */
 BudgetPageExpenses::BudgetPageExpenses(QObject *parent, const QString &name, const QString &description, double price,
                                        double quantity
@@ -52,7 +54,7 @@ BudgetPageExpenses::BudgetPageExpenses(QObject *parent, const QString &name, con
 }
 
 /**
- * creates an Expense object from a json
+ * @brief creates an Expense object from a json
  * @param parent
  * @param Expense
 *          \n "Name" - Name of Expense
@@ -79,7 +81,7 @@ BudgetPageExpenses::BudgetPageExpenses(QObject *parent, const QJsonObject &Expen
 }
 
 /**
- * creates a json with data from expense item, used for offline mode/saving
+ * @brief creates a json with data from expense item, used for offline mode/saving
  * @return A QJson object with the values for this expense item
  *         \n "Name" - Name of Expense
  *         \n "Description" - description of Expense
@@ -98,6 +100,7 @@ QJsonObject BudgetPageExpenses::to_JSON() const {
 /**
  * 
  * @return the remove button QPushButton
+  * @author Katherine R
  */
 QPushButton *BudgetPageExpenses::getRemoveButton() {
     return expenseObj_removeExpenseButton;
@@ -106,14 +109,16 @@ QPushButton *BudgetPageExpenses::getRemoveButton() {
 /**
  * 
  * @return price * quantity of expense item
+  * @author Katherine R
  */
 double BudgetPageExpenses::getExpense() const {
     return this->price * this->quantity;
 }
 
 /**
- * Slot detects if the expense name is changed, changes the expenseName to the new one
+ * @brief Slot detects if the expense name is changed, changes the expenseName to the new one
  * @param newName the new name for the expense
+  * @author Katherine R
  */
 void BudgetPageExpenses::onExpenseNameChangedSlot(const QString &newName) const {
     *expenseName = newName;
@@ -123,7 +128,7 @@ void BudgetPageExpenses::onExpenseNameChangedSlot(const QString &newName) const 
 }
 
 /**
- * slot detects if the description name is changed, changes the description to the new one
+ * @brief slot detects if the description name is changed, changes the description to the new one
  * @param newDescription the new description
  */
 void BudgetPageExpenses::onExpenseDescriptionChangedSlot(const QString &newDescription) const {
@@ -135,9 +140,10 @@ void BudgetPageExpenses::onExpenseDescriptionChangedSlot(const QString &newDescr
 
 
 /**
- * slot detects if the price or quantity for the expense has changed
+ * @brief slot detects if the price or quantity for the expense has changed
  * @param change new value
  * @param changedType 'P' for price 'Q' for quantity
+  * @author Katherine R
  */
 void BudgetPageExpenses::expenseSBChangedSlot(double change, char changedType) {
     double oldExpenses = this->quantity * this->price;
@@ -160,9 +166,10 @@ void BudgetPageExpenses::expenseSBChangedSlot(double change, char changedType) {
 }
 
 /**
- * Creates the UI for the expense item
+ * @brief Creates the UI for the expense item
  * @param parent QWidget to add the UI to
  * @param vbox VBox to add the UI to
+  * @author Katherine R
  */
 void BudgetPageExpenses::createExpenseUI(QWidget *parent, QVBoxLayout *vbox) {
     expenseObj_NameLineEdit->setPlaceholderText(tr("Name"));
@@ -202,7 +209,7 @@ void BudgetPageExpenses::createExpenseUI(QWidget *parent, QVBoxLayout *vbox) {
 }
 
 /**
- * deletes expenses object
+ * @brief deletes expenses object
  */
 BudgetPageExpenses::~BudgetPageExpenses() {
     delete expenseObj_NameLineEdit;
