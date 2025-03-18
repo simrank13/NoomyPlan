@@ -1,5 +1,5 @@
  /**
- * @file authenticatesystem.cpp
+ * @class authenticatesystem.cpp
  * @brief Implementation of the AuthenticateSystem class.
  * 
  * This file contains the implementation of the AuthenticateSystem class, which 
