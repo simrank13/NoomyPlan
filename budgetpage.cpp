@@ -13,22 +13,22 @@ BudgetPage::BudgetPage(QWidget *parent)
     this->budgetPeriodIndex = 1;
     this->setWindowTitle("Budget plan");
 
-    //creates budget objects
+    //creates budget objects for every possible budget period
     for (int i = 0; i <= 17; i++) {
-        budgets.append(new BudgetPageBudget(nullptr, i));
+        budgets.append(new BudgetPageBudget(nullptr, i));//creates budget object
     }
     centralWidget = new QWidget(parent);
     budgetLayout = new QGridLayout(centralWidget);
     setCentralWidget(centralWidget);
 
-
-    createBudgetPeriodSelector();
-    createBudgetSelector();
-    createExpensesSubPage();
-    updateBarGraph();
+    createBudgetPeriodSelector();//creates the budget period selector UI
+    createBudgetSelector();//creates a UI area to set budget
+    createExpensesSubPage();//creates an UI area for expenses
+    updateBarGraph();//creates the bar graph UI
+    //adds bar graph update button
     barGraph_updateButton = new QPushButton("Update Graph");
     budgetLayout->addWidget(barGraph_updateButton, 1, 1);
-    connect(barGraph_updateButton, &QPushButton::clicked, this, &BudgetPage::updateBarGraph);
+    connect(barGraph_updateButton, &QPushButton::clicked, this, &BudgetPage::updateBarGraph);//connects it to update
 }
 
 /**
@@ -42,7 +42,7 @@ QJsonObject BudgetPage::to_JSON() {
     QJsonObject budgetJSonObj;
     //saves all the objects
     for (int i = 0; i <= 17; i++) {
-        budgetJson.append(budgets.at(i)->to_JSON());
+        budgetJson.append(budgets.at(i)->to_JSON());//adds the budget @index to json
     }
     budgetJSonObj.insert("Budgets", budgetJson);
     return budgetJSonObj;
