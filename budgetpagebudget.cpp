@@ -11,9 +11,11 @@ BudgetPageBudget::BudgetPageBudget(QObject *parent)
     this->totalExpenses = 0;
     this->remainingBudget = 0;
     this->budgetIndex = 0;
-    this->budgetObj_expenseScrollArea = new QScrollArea();
+    //creates area for expenses
+    this->budgetObj_expenseScrollArea = new QScrollArea();//for scrolling expenses
     this->budgetObj_expenseScrollWidget = new QWidget();
     this->budgetObj_expenseScrollListVbox = new QVBoxLayout();
+    //sets the widget of the scroll area
     this->budgetObj_expenseScrollArea->setWidget(this->budgetObj_expenseScrollWidget);
     this->budgetObj_expenseScrollArea->setWidgetResizable(true);
     this->budgetObj_expenseScrollWidget->setLayout(this->budgetObj_expenseScrollListVbox);
@@ -31,9 +33,11 @@ BudgetPageBudget::BudgetPageBudget(QObject *parent, int budgetindex)
     this->totalExpenses = 0;
     this->remainingBudget = 0;
     this->budgetIndex = budgetindex;
-    this->budgetObj_expenseScrollArea = new QScrollArea();
+     //creates area for expenses
+    this->budgetObj_expenseScrollArea = new QScrollArea();//for scrolling expenses
     this->budgetObj_expenseScrollWidget = new QWidget();
     this->budgetObj_expenseScrollListVbox = new QVBoxLayout();
+    //sets the widget of the scroll area
     this->budgetObj_expenseScrollArea->setWidget(this->budgetObj_expenseScrollWidget);
     this->budgetObj_expenseScrollArea->setWidgetResizable(true);
     this->budgetObj_expenseScrollWidget->setLayout(this->budgetObj_expenseScrollListVbox);
@@ -53,9 +57,11 @@ BudgetPageBudget::BudgetPageBudget(QObject *parent, double budget, double totale
     this->totalExpenses = totalexpense;
     this->remainingBudget = remainingbudget;
     this->budgetIndex = budgetindex;
-    this->budgetObj_expenseScrollArea = new QScrollArea();
+    //creates area for expenses
+    this->budgetObj_expenseScrollArea = new QScrollArea();//for scrolling expenses
     this->budgetObj_expenseScrollWidget = new QWidget();
     this->budgetObj_expenseScrollListVbox = new QVBoxLayout();
+    //sets the widget of the scroll area
     this->budgetObj_expenseScrollArea->setWidget(this->budgetObj_expenseScrollWidget);
     this->budgetObj_expenseScrollArea->setWidgetResizable(true);
     this->budgetObj_expenseScrollWidget->setLayout(this->budgetObj_expenseScrollListVbox);
@@ -75,11 +81,13 @@ BudgetPageBudget::BudgetPageBudget(QObject *parent, const QJsonObject &json) : Q
     //splits Expenses into JSON array, then adds them
     QJsonArray expensesArray = json.value("Expenses").toArray();
     for (QJsonValue expense: expensesArray) {
-        this->expenses.append(new BudgetPageExpenses(this, expense.toObject()));
+        this->expenses.append(new BudgetPageExpenses(this, expense.toObject()));//creates expense from QJsonObject
     }
-    this->budgetObj_expenseScrollArea = new QScrollArea();
+    //creates area for expenses
+    this->budgetObj_expenseScrollArea = new QScrollArea();//for scrolling expenses
     this->budgetObj_expenseScrollWidget = new QWidget();
     this->budgetObj_expenseScrollListVbox = new QVBoxLayout();
+    //sets the widget of the scroll area
     this->budgetObj_expenseScrollArea->setWidget(this->budgetObj_expenseScrollWidget);
     this->budgetObj_expenseScrollArea->setWidgetResizable(true);
     this->budgetObj_expenseScrollWidget->setLayout(this->budgetObj_expenseScrollListVbox);
@@ -181,6 +189,7 @@ void BudgetPageBudget::changeTotalExpenses(double delta) {
 QJsonObject BudgetPageBudget::to_JSON() {
     QJsonObject jsonDoc;
     QJsonArray expensesArray;
+    //for every expense, adds them to jsonarray
     for (BudgetPageExpenses *expense: this->expenses) {//adds expenses to a QJSonarray
         expensesArray.append(expense->to_JSON());
     }
@@ -192,15 +201,27 @@ QJsonObject BudgetPageBudget::to_JSON() {
     jsonDoc.insert("Index", this->budgetIndex);
     return jsonDoc;
 }
-
+/**
+*@Brief getter for scrollwidget 
+@author Katherine R
+@return the expenses widget
+*/
 QWidget *BudgetPageBudget::getExpensescrollwidget() {
     return budgetObj_expenseScrollWidget;
 }
-
+/**
+*@Brief getter for expenses scroll area 
+@author Katherine R
+@return the expenses Qscrollarea for scroll area
+*/
 QScrollArea *BudgetPageBudget::getExpensescrollarea() {
     return budgetObj_expenseScrollArea;
 }
-
+/**
+*@Brief getter for expenses vbox 
+@author Katherine R
+@return the expenses vbox
+*/
 QVBoxLayout *BudgetPageBudget::getExpensesscrolllistvbox() {
     return budgetObj_expenseScrollListVbox;
 }

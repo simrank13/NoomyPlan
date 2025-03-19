@@ -11,7 +11,7 @@ BudgetPageExpenses::BudgetPageExpenses(QObject *parent)
     this->expenseDescription = new QString("");
     this->quantity = 1;
     this->price = 0;
-
+    //creates UI objects for the expense item
     expenseObj_ExpenseWidget = new QWidget;
     expenseObj_addExpenseForm = new QFormLayout;
     expenseObj_Layout = new QVBoxLayout;
@@ -20,6 +20,7 @@ BudgetPageExpenses::BudgetPageExpenses(QObject *parent)
     expenseObj_DescriptionLineEdit = new QLineEdit;
     expenseObj_QuantitySpinBox = new QDoubleSpinBox;
     expenseObj_PriceSpinBox = new QDoubleSpinBox;
+    //creates UI objects for removing expense buttons/hbox
     expenseObj_removeExpenseHbox = new QHBoxLayout(expenseObj_removeExpenseButtonWidget);
     expenseObj_removeExpenseButton = new QPushButton(tr("Remove"));
 }
@@ -41,6 +42,7 @@ BudgetPageExpenses::BudgetPageExpenses(QObject *parent, const QString &name, con
     this->price = price;
     this->quantity = quantity;
 
+   //creates UI objects for the expense item
     expenseObj_ExpenseWidget = new QWidget;
     expenseObj_addExpenseForm = new QFormLayout;
     expenseObj_Layout = new QVBoxLayout;
@@ -49,6 +51,7 @@ BudgetPageExpenses::BudgetPageExpenses(QObject *parent, const QString &name, con
     expenseObj_DescriptionLineEdit = new QLineEdit;
     expenseObj_QuantitySpinBox = new QDoubleSpinBox;
     expenseObj_PriceSpinBox = new QDoubleSpinBox;
+    //creates UI objects for removing expense buttons/hbox
     expenseObj_removeExpenseHbox = new QHBoxLayout(expenseObj_removeExpenseButtonWidget);
     expenseObj_removeExpenseButton = new QPushButton(tr("Remove"));
 }
@@ -68,6 +71,7 @@ BudgetPageExpenses::BudgetPageExpenses(QObject *parent, const QJsonObject &Expen
     price = Expense.value("price").toDouble();
     quantity = Expense.value("quantity").toDouble();
 
+  //creates UI objects for the expense item
     expenseObj_ExpenseWidget = new QWidget;
     expenseObj_addExpenseForm = new QFormLayout;
     expenseObj_Layout = new QVBoxLayout;
@@ -76,6 +80,7 @@ BudgetPageExpenses::BudgetPageExpenses(QObject *parent, const QJsonObject &Expen
     expenseObj_DescriptionLineEdit = new QLineEdit;
     expenseObj_QuantitySpinBox = new QDoubleSpinBox;
     expenseObj_PriceSpinBox = new QDoubleSpinBox;
+    //creates UI objects for removing expense buttons/hbox
     expenseObj_removeExpenseHbox = new QHBoxLayout(expenseObj_removeExpenseButtonWidget);
     expenseObj_removeExpenseButton = new QPushButton(tr("Remove"));
 }
@@ -90,6 +95,7 @@ BudgetPageExpenses::BudgetPageExpenses(QObject *parent, const QJsonObject &Expen
  */
 QJsonObject BudgetPageExpenses::to_JSON() const {
     QJsonObject expenseJson;
+    //inserts expense item values to json
     expenseJson.insert("Name", *expenseName);
     expenseJson.insert("Description", *expenseDescription);
     expenseJson.insert("Price", QString::number(price));
@@ -107,7 +113,7 @@ QPushButton *BudgetPageExpenses::getRemoveButton() {
 }
 
 /**
- * 
+ * @brief getter for expense value
  * @return price * quantity of expense item
   * @author Katherine R
  */
@@ -130,6 +136,7 @@ void BudgetPageExpenses::onExpenseNameChangedSlot(const QString &newName) const 
 /**
  * @brief slot detects if the description name is changed, changes the description to the new one
  * @param newDescription the new description
+ @author Katherine R
  */
 void BudgetPageExpenses::onExpenseDescriptionChangedSlot(const QString &newDescription) const {
     *expenseDescription = newDescription;
@@ -211,6 +218,7 @@ void BudgetPageExpenses::createExpenseUI(QWidget *parent, QVBoxLayout *vbox) {
 
 /**
  * @brief deletes expenses object
+ @author Katherine R
  */
 BudgetPageExpenses::~BudgetPageExpenses() {
     delete expenseObj_NameLineEdit;

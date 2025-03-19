@@ -264,8 +264,8 @@ void BudgetPage::createBudgetSelector() {
     budgetSelector_VBox = new QVBoxLayout;
 
     //set budget spinbox config
-    budgetSelector_SpinBox->setPrefix(tr("$\t"));
-    budgetSelector_SpinBox->setMaximum(100000000);
+    budgetSelector_SpinBox->setPrefix(tr("$\t"));//adds a $ sign
+    budgetSelector_SpinBox->setMaximum(100000000);//sets a max value
     budgetSelector_SpinBox->setDecimals(2);
     budgetSelector_SpinBox->setAlignment(Qt::AlignRight);
     //adds to layout
@@ -288,9 +288,10 @@ void BudgetPage::createExpensesSubPage() {
     //creates a group and vbox for the expense plan area
     expenses_Group = new QGroupBox(tr("Expense Plan"));
     expenses_vbox = new QVBoxLayout;
-    expenses_addExpenseButton = new QPushButton(tr("Add Expense"), this);
-    expenses_remainingBudgetLabel = new QLabel(tr("Remaining Budget: $0.00"));
-    expenses_totalExpensesLabel = new QLabel(tr("Total Expenses: $0.00"));
+    expenses_addExpenseButton = new QPushButton(tr("Add Expense"), this);//creates a button to add new expense
+    expenses_remainingBudgetLabel = new QLabel(tr("Remaining Budget: $0.00"));//lists remainign budget
+    expenses_totalExpensesLabel = new QLabel(tr("Total Expenses: $0.00"));//lists total expenses
+    //adds them to vbox
     expenses_vbox->addWidget(expenses_remainingBudgetLabel);
     expenses_vbox->addWidget(expenses_totalExpensesLabel);
     expenses_vbox->addWidget(expenses_addExpenseButton);
@@ -409,21 +410,21 @@ void BudgetPage::updateBarGraph() {
     }
     //adds values from budgets to graph QBarset 
     for (int i = rangelow; i <= rangehigh; i++) {
-        if (budgets.at(i)->getRemainingBudget() < 0) {
+        if (budgets.at(i)->getRemainingBudget() < 0) {// if the remaining budget is negative
             // barChart_Neg->append((qreal)budgets.at(i)->getRemainingBudget());
             // barChart_Value->append((qreal)0.0);
-            *barChart_Neg << (double) budgets.at(i)->getRemainingBudget();
-            *barChart_Value<< (qreal)0.0;
+            *barChart_Neg << (double) budgets.at(i)->getRemainingBudget();//adds value to negative chart
+            *barChart_Value<< (qreal)0.0; //adds 0 to positive chart
         } else {
             // barChart_Value->append((qreal)budgets.at(i)->getRemainingBudget());
             // barChart_Neg->append((qreal)0);
-            *barChart_Value<<((qreal)budgets.at(i)->getRemainingBudget());
-            *barChart_Neg<<((qreal)0);
+            *barChart_Value<<((qreal)budgets.at(i)->getRemainingBudget());//adds value to positive chart
+            *barChart_Neg<<((qreal)0);//adds value to negative chart
         }
     }
     //sets the colors for the bar chart bars
     barChart_Value->setColor(Qt::black);
-    barChart_Neg->setColor(QColor(97, 24, 8));
+    barChart_Neg->setColor(QColor(97, 24, 8));//red color
     //adds values to the series
     barChart_series = new QStackedBarSeries;
     barChart_series->append(barChart_Value);
@@ -448,7 +449,7 @@ void BudgetPage::updateBarGraph() {
 }
 
 /**
- * @brief destructor
+ * @brief destructor for budgetpage
   * @author Katherine R
  */
 BudgetPage::~BudgetPage() {
