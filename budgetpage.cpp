@@ -3,7 +3,8 @@
 
 
 /**
-* @brief default constructor for the budget page
+*  @brief default constructor for the budget page
+\n sets budget index to Quarterly and Q1, creates budget objects, displays UI
  * @param parent 
  * @author - Katherine R
  */
@@ -33,6 +34,7 @@ BudgetPage::BudgetPage(QWidget *parent)
 
 /**
  * @brief saves data of the budget page for offline mode
+ * saves a JSON with any relevant data
  * @return JSON with the budget data
  * \n @copydoc BudgetPageBudget::to_JSON()
   * @author - Katherine R
@@ -50,6 +52,7 @@ QJsonObject BudgetPage::to_JSON() {
 
 /**
  * @brief adds json budget for offline/saves
+ imports JSON budget according to to_JSON()
  * @param JSON with budget data - needs to be the same as to_JSON()
  * \n @copydoc BudgetPageBudget::to_JSON()
 * @author - Katherine R
@@ -182,6 +185,7 @@ void BudgetPage::onBudgetPeriodChangeSlot(int index, char period) {
 
 /**
  * @brief calculates the remaining budget for budgets[budgetPeriodIndex]
+* for budgets[budgetPeriodIndex] :budget - total expenses
  * @author - Katherine R
  */
 void BudgetPage::calculateRemainingBudget() {
@@ -196,7 +200,7 @@ void BudgetPage::calculateRemainingBudget() {
 
 /**
  * @brief creates the budget period selector widget
- * \n allows selection of budget period (Monthly, Yearly, Quarterly) for BudgetPage
+ * \n allows selection of budget period (Monthly, Yearly, Quarterly) for BudgetPage using a combobox
  * \n and (Q1-Q4) (jan-dec)
  * @author - Katherine R
  */
@@ -281,7 +285,7 @@ void BudgetPage::createBudgetSelector() {
 /**
  * @brief creates a scrollable, dynamic list of expenses
  * \n can set the name, desc, price, and count
- * \n calculates total and remaining budget automatically
+ * \n calculates total and remaining budget automatically using calculateRemainingBudget 
  * @author - Katherine R
  */
 void BudgetPage::createExpensesSubPage() {

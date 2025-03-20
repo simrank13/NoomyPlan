@@ -2,6 +2,7 @@
 
 /**
  * @brief default construtor, everything set to 0.
+ *also creates necessary UI objects
  * @param parent parent qobject
   * @author Katherine R
  */
@@ -22,7 +23,8 @@ BudgetPageBudget::BudgetPageBudget(QObject *parent)
 }
 
 /**
- * @brief parametrized construtor, everything set to 0, except index
+ * @brief semi parametrized construtor, everything set to 0, except index
+ *also creates necessary UI objects
  * @param parent parent qobject
  * @param budgetindex the index (0 = year, 1-5 = Q1-Q4, 6-18 = jan-dec) for to_JSON
   * @author Katherine R
@@ -71,6 +73,8 @@ BudgetPageBudget::BudgetPageBudget(QObject *parent, double budget, double totale
 * @brief parametized constructor - creates a budget object from QJSONobject
  * @param parent parent object
  * @param json
+ * JSON needs to be the same as to_JSON()
+ @copydoc BudgetPageBudget::to_JSON()
   * @author Katherine R
  */
 BudgetPageBudget::BudgetPageBudget(QObject *parent, const QJsonObject &json) : QObject{parent} {

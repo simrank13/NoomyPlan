@@ -2,6 +2,7 @@
 
 /**
  * @brief default constructor for expenses
+ * quanity is set to 1, everything set to 0 or null string
  * @param parent parent QObject if needed
   * @author Katherine R
  */
@@ -175,6 +176,11 @@ void BudgetPageExpenses::expenseSBChangedSlot(double change, char changedType) {
 
 /**
  * @brief Creates the UI for the expense item
+ *
+ *creates spinboxes for price and quantity
+ *creates forms for name and description
+ *connects them to expensesSBchangedslot, onExpenseDescriptionChangedSlot, onExpenseNameChangedSlot
+ *
  * @param parent QWidget to add the UI to
  * @param vbox VBox to add the UI to
   * @author Katherine R
