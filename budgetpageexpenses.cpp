@@ -13,17 +13,17 @@ BudgetPageExpenses::BudgetPageExpenses(QObject *parent)
     this->quantity = 1;
     this->price = 0;
     //creates UI objects for the expense item
-    expenseObj_ExpenseWidget = new QWidget;
-    expenseObj_addExpenseForm = new QFormLayout;
+    expenseObj_ExpenseWidget = new QWidget;//the widget for the expense
+    expenseObj_addExpenseForm = new QFormLayout;//the form layout for the expense 
     expenseObj_Layout = new QVBoxLayout;
-    expenseObj_removeExpenseButtonWidget = new QWidget();
-    expenseObj_NameLineEdit = new QLineEdit;
+    expenseObj_removeExpenseButtonWidget = new QWidget();//the widget for the expense remove button
+    expenseObj_NameLineEdit = new QLineEdit;//expense name 
     expenseObj_DescriptionLineEdit = new QLineEdit;
     expenseObj_QuantitySpinBox = new QDoubleSpinBox;
     expenseObj_PriceSpinBox = new QDoubleSpinBox;
     //creates UI objects for removing expense buttons/hbox
-    expenseObj_removeExpenseHbox = new QHBoxLayout(expenseObj_removeExpenseButtonWidget);
-    expenseObj_removeExpenseButton = new QPushButton(tr("Remove"));
+    expenseObj_removeExpenseHbox = new QHBoxLayout(expenseObj_removeExpenseButtonWidget);//hbox for the expense remove button
+    expenseObj_removeExpenseButton = new QPushButton(tr("Remove"));//the expense remove button
 }
 
 /**
@@ -43,18 +43,18 @@ BudgetPageExpenses::BudgetPageExpenses(QObject *parent, const QString &name, con
     this->price = price;
     this->quantity = quantity;
 
-   //creates UI objects for the expense item
-    expenseObj_ExpenseWidget = new QWidget;
-    expenseObj_addExpenseForm = new QFormLayout;
+    //creates UI objects for the expense item
+    expenseObj_ExpenseWidget = new QWidget;//the widget for the expense
+    expenseObj_addExpenseForm = new QFormLayout;//the form layout for the expense 
     expenseObj_Layout = new QVBoxLayout;
-    expenseObj_removeExpenseButtonWidget = new QWidget();
-    expenseObj_NameLineEdit = new QLineEdit;
+    expenseObj_removeExpenseButtonWidget = new QWidget();//the widget for the expense remove button
+    expenseObj_NameLineEdit = new QLineEdit;//expense name 
     expenseObj_DescriptionLineEdit = new QLineEdit;
     expenseObj_QuantitySpinBox = new QDoubleSpinBox;
     expenseObj_PriceSpinBox = new QDoubleSpinBox;
     //creates UI objects for removing expense buttons/hbox
-    expenseObj_removeExpenseHbox = new QHBoxLayout(expenseObj_removeExpenseButtonWidget);
-    expenseObj_removeExpenseButton = new QPushButton(tr("Remove"));
+    expenseObj_removeExpenseHbox = new QHBoxLayout(expenseObj_removeExpenseButtonWidget);//hbox for the expense remove button
+    expenseObj_removeExpenseButton = new QPushButton(tr("Remove"));//the expense remove button
 }
 
 /**
@@ -72,18 +72,18 @@ BudgetPageExpenses::BudgetPageExpenses(QObject *parent, const QJsonObject &Expen
     price = Expense.value("price").toDouble();
     quantity = Expense.value("quantity").toDouble();
 
-  //creates UI objects for the expense item
-    expenseObj_ExpenseWidget = new QWidget;
-    expenseObj_addExpenseForm = new QFormLayout;
+    //creates UI objects for the expense item
+    expenseObj_ExpenseWidget = new QWidget;//the widget for the expense
+    expenseObj_addExpenseForm = new QFormLayout;//the form layout for the expense 
     expenseObj_Layout = new QVBoxLayout;
-    expenseObj_removeExpenseButtonWidget = new QWidget();
-    expenseObj_NameLineEdit = new QLineEdit;
+    expenseObj_removeExpenseButtonWidget = new QWidget();//the widget for the expense remove button
+    expenseObj_NameLineEdit = new QLineEdit;//expense name 
     expenseObj_DescriptionLineEdit = new QLineEdit;
     expenseObj_QuantitySpinBox = new QDoubleSpinBox;
     expenseObj_PriceSpinBox = new QDoubleSpinBox;
     //creates UI objects for removing expense buttons/hbox
-    expenseObj_removeExpenseHbox = new QHBoxLayout(expenseObj_removeExpenseButtonWidget);
-    expenseObj_removeExpenseButton = new QPushButton(tr("Remove"));
+    expenseObj_removeExpenseHbox = new QHBoxLayout(expenseObj_removeExpenseButtonWidget);//hbox for the expense remove button
+    expenseObj_removeExpenseButton = new QPushButton(tr("Remove"));//the expense remove button
 }
 
 /**
@@ -157,10 +157,10 @@ void BudgetPageExpenses::expenseSBChangedSlot(double change, char changedType) {
     double oldExpenses = this->quantity * this->price;
     //determines the type that was changed (price or quantity)
     switch (changedType) {
-        case 'Q':
+        case 'Q'://if quantity
             this->quantity = change;
             break;
-        case 'P':
+        case 'P'://if price
             this->price = change;
             break;
         default:

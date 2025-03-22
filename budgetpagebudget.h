@@ -12,7 +12,8 @@
 * it stores the budget, remaining and total expenses
 * and stores a dynamic vector array w budgetpageexpenses
 * it also stores some UI elements for the expenses area
-* @copydoc budgetpagebudget
+* @copydoc budgetpageexpenses
+* @author Katherine R
 **/
 class BudgetPageBudget : public QObject {
     Q_OBJECT
@@ -40,14 +41,14 @@ public:
      * @param remainingbudget remaining budget
      */
     BudgetPageBudget(QObject *parent, double budget, double totalexpense, double remainingbudget, int budgetindex);
-/**
-* @brief parametized constructor - creates a budget object from QJSONobject
- * @param parent parent object
- * @param json
- * JSON needs to be the same as to_JSON()
- @copydoc BudgetPageBudget::to_JSON()
-  * @author Katherine R
- */
+    /**
+    * @brief parametized constructor - creates a budget object from QJSONobject
+     * @param parent parent object
+     * @param json
+     * JSON needs to be the same as to_JSON()
+     @copydoc BudgetPageBudget::to_JSON()
+      * @author Katherine R
+     */
     BudgetPageBudget(QObject *parent, const QJsonObject& json);
 
 /**
@@ -137,14 +138,14 @@ public:
     QVBoxLayout *getExpensesscrolllistvbox();
 
 private:
-    QVector<BudgetPageExpenses *> expenses;
+    QVector<BudgetPageExpenses *> expenses;//stores expense items
     double budget;
     double totalExpenses;
     double remainingBudget;
     int budgetIndex; // index 0 = yearly 1-5 = Q1-Q4, 6-18 = jan-dec
     QWidget *budgetObj_expenseScrollWidget;
-    QScrollArea *budgetObj_expenseScrollArea;
-    QVBoxLayout *budgetObj_expenseScrollListVbox;
+    QScrollArea *budgetObj_expenseScrollArea;//scroll area for expense items
+    QVBoxLayout *budgetObj_expenseScrollListVbox;//vbox for expense items
 };
 
 #endif // BUDGETPAGEBUDGET_H

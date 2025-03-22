@@ -208,7 +208,7 @@ QJsonObject BudgetPageBudget::to_JSON() {
 /**
 *@Brief getter for scrollwidget 
 @author Katherine R
-@return the expenses widget
+@return the expenses area widget
 */
 QWidget *BudgetPageBudget::getExpensescrollwidget() {
     return budgetObj_expenseScrollWidget;
