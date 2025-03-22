@@ -105,7 +105,7 @@ QJsonObject BudgetPageExpenses::to_JSON() const {
 }
 
 /**
- * 
+ * @brief getter for expenbse remove button
  * @return the remove button QPushButton
   * @author Katherine R
  */
