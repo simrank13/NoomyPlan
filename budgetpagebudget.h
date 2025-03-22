@@ -7,10 +7,15 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QScrollArea>
-
+/**
+*This class stores budget and expenses information 
+* it stores the budget, remaining and total expenses
+* and stores a dynamic vector array w budgetpageexpenses
+* it also stores some UI elements for the expenses area
+* @copydoc budgetpagebudget
+**/
 class BudgetPageBudget : public QObject {
     Q_OBJECT
-
 public:
     /**
      * @brief default construtor, everything set to 0.
@@ -106,9 +111,9 @@ public:
             \n "Budget" - the budget
             \n "Total Expenses" - the total expenses
             \n "Remaining Budget" - the remaining budget
-            \n "Expenses" an array with Expense::to_JSON()
             \n "Index" 0-18, the budget period (0-yearly) (1-5 Q1-Q4) (6-18 jan-dec)
- *          \n @copydoc BudgetPageExpenses::to_JSON()
+            \n "Expenses" an array with Expense::to_JSON()
+*           \n @copydoc BudgetPageExpenses::to_JSON()
   * @author Katherine R
  */
     QJsonObject to_JSON();

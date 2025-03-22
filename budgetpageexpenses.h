@@ -16,7 +16,12 @@
 #include<QJsonObject>
 
 #define SHOW_DEBUG_LOGS true
-
+/**
+* this class stores information for a single expense item
+* \n it stores a name, description, quantity and price
+* \n it also has some UI elements that allow changing those values
+* \n casts expenseChangedSignal when the expense quantity or price is changed
+*/
 class BudgetPageExpenses : public QObject {
     Q_OBJECT
 

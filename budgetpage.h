@@ -20,7 +20,14 @@
 #include <QValueAxis>
 #include "budgetpagebudget.h"
 #include "budgetpageexpenses.h"
-
+/**
+* This is the UI class for the budgetpage
+* \n it allows users to pick a budget period, set a budget for that period, and add expenses
+* \n it also allows users to view a bar graph that summarizes the total net budget for the fisical period
+* \n it uses budgetpagebudget to store the budgets for different time periods (Quarters, months, and a yearly one)
+* \n relies on budgetpagebudget and budgetpage expenses
+* @copydoc budgetpagebudget
+*/
 class BudgetPage : public QMainWindow {
     Q_OBJECT
 
@@ -28,7 +35,7 @@ public:
     /**
     *  @brief default constructor for the budget page
     \n sets budget index to Quarterly and Q1, creates budget objects, displays UI
-     * @param parent 
+     * @param parent qwidget
      * @author - Katherine R
      */
     explicit BudgetPage(QWidget *parent = nullptr);
@@ -40,16 +47,20 @@ public:
     /**
      * @brief saves data of the budget page for offline mode
      * saves a JSON with any relevant data
+     *
+     * 
      * @return JSON with the budget data
-     * \n @copydoc BudgetPageBudget::to_JSON()
+     * \n "Budgets" JsonArray contaiting JSONs of budgetpagebudget
+     * \n specified in - @copydoc BudgetPageBudget::to_JSON()
       * @author - Katherine R
      */
     QJsonObject to_JSON();
     /**
      * @brief adds json budget for offline/saves
-     imports JSON budget according to to_JSON()
+     * imports JSON budget according to to_JSON() and adds them to the page
      * @param JSON with budget data - needs to be the same as to_JSON()
-     * \n @copydoc BudgetPageBudget::to_JSON()
+     * "Budgets" Array with budgetpagebudget JSONS
+     * \n defined in @copydoc BudgetPageBudget::to_JSON()
     * @author - Katherine R
      */
     void getJSONBudget(const QJsonObject &budget);
@@ -62,9 +73,11 @@ public slots:
      * @author - Katherine R
      */
     void onBudgetChangeSlot(double budget);
+
     /**
      * @brief QT Slot to detect changes in Expense object
-     * \n then calculates the new total and remaining budget
+     * \n then calculates the new total by adding the change
+     * \n after that, calculates the remaining budget using calculateRemainingBudget()
      * @param delta - change in expense
      * @author - Katherine R
      */
@@ -72,13 +85,15 @@ public slots:
     /**
      * @brief Slot for when the user changes the budget period type (monthly , quarterly, yearly)
      *\n then changes the text for the budget spinbox
+     *\n then swaps the period selector combo box to the selected one (so for the Q1-Q4 spinbox if quarterly is selected)
      *\n and swaps the budgets to the selected one
      * @author - Katherine R
      */
     void onBudgetPeriodTypeChangedSlot(int index);
-    /**
-     * @brief detects when budget periods are changed
+     /**
+     * @brief slot detects when budget periods are changed
      * changes the budget object when another budget period is selected I.E (jan, feb, Q1..)
+     * changes the budget label to X Budget - Y, X being quarterly/monthly/yrly, Y being Q1-Q5 jan-dec
      * @param index index of changed Combobox
      * @param period M for monthly Q for quarterly
      * @author - Katherine R
@@ -99,12 +114,13 @@ public slots:
     void createBudgetPeriodSelector();
     /**
      * @brief creates a budget selector for BudgetPage
-     * \n uses a spinbox to set the budget
+     * \n uses a spinbox to set the budget, connects to onBudgetChangeSlot
       * @author - Katherine 
      */
     void createBudgetSelector();
     /**
      * @brief creates a scrollable, dynamic list of expenses
+     * \n creates a separate expense area for every budgetpagebudget, (so that each budget period can have it's own list of expenses)
      * \n can set the name, desc, price, and count
      * \n calculates total and remaining budget automatically using calculateRemainingBudget 
      * @author - Katherine R
@@ -112,17 +128,20 @@ public slots:
     void createExpensesSubPage();
     /**
      * @brief Changes the budget page variables to the new budget period
+     * swaps some expense UI elements
      * \n as many UI elements as possible are renamed instead of replaced
       * @author - Katherine R
      */
     void changeBudgetPage();
     /**
      * @brief creates a new expense item, adds it to the budget object and adds GUI
+     * the expense item is created for the budgetpagebudget at the selected budget period
       * @author - Katherine R
      */
     void newExpense();
     /**
      * @brief deletes the expense item provided, removes it from the expenses QVector
+     * deletes it from the budgetpagebudget for the selected budget period
      * \n and calculates new total expense
      * @param toDelete expense item to delete
       * @author - Katherine R
@@ -130,6 +149,9 @@ public slots:
     void deleteExpense(BudgetPageExpenses *toDelete);
     /**
      * @brief "updates" the bar graph
+     * creates a new graph object, replacing the old one
+     * the graph contains X bars, 1 per every budget period (4 for quarterly, 12 for monthly, 1 for yearly)
+     * negative budgets show as a red bar, while positive budgets show as a black bar
      * \n trying to actually update the variables wouldn't work automatically,
      * \n so i decided to just add a button to "update" (create a new graph to replace)
       * @author - Katherine R

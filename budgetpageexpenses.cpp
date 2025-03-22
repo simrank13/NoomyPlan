@@ -186,17 +186,21 @@ void BudgetPageExpenses::expenseSBChangedSlot(double change, char changedType) {
   * @author Katherine R
  */
 void BudgetPageExpenses::createExpenseUI(QWidget *parent, QVBoxLayout *vbox) {
+    //creates a line edit for name and description
     expenseObj_NameLineEdit->setPlaceholderText(tr("Name"));
     expenseObj_DescriptionLineEdit->setPlaceholderText(tr("Description"));
+    //creates a spinbox for price and quantity
     expenseObj_QuantitySpinBox->setRange(1, 999); //configures spinbox
     expenseObj_PriceSpinBox->setPrefix(tr("$\t"));
     expenseObj_PriceSpinBox->setMaximum(100000000);
     expenseObj_PriceSpinBox->setDecimals(2);
     expenseObj_QuantitySpinBox->setDecimals(0);
+    //adds them to a form
     expenseObj_addExpenseForm->addRow(tr("Quantity:"), expenseObj_QuantitySpinBox);
     expenseObj_addExpenseForm->addRow(tr("Name:"), expenseObj_NameLineEdit); //adds the name,desc,price,qty to the form
     expenseObj_addExpenseForm->addRow(tr("Description:"), expenseObj_DescriptionLineEdit);
     expenseObj_addExpenseForm->addRow(tr("Price:"), expenseObj_PriceSpinBox);
+    //sets text and value for name, desc, quantity, price to the values from the object
     expenseObj_NameLineEdit->setText(*this->expenseName);
     expenseObj_DescriptionLineEdit->setText(*this->expenseDescription);
     expenseObj_QuantitySpinBox->setValue(this->quantity);

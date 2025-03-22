@@ -71,11 +71,11 @@ BudgetPageBudget::BudgetPageBudget(QObject *parent, double budget, double totale
 
 /**
 * @brief parametized constructor - creates a budget object from QJSONobject
- * @param parent parent object
+ * @param parent parent Qobject
  * @param json
- * JSON needs to be the same as to_JSON()
- @copydoc BudgetPageBudget::to_JSON()
-  * @author Katherine R
+ * \n JSON needs to be the same format as to_JSON()
+ @ \n copydoc BudgetPageBudget::to_JSON()
+ * @author Katherine R
  */
 BudgetPageBudget::BudgetPageBudget(QObject *parent, const QJsonObject &json) : QObject{parent} {
     this->budget = json.value("Budget").toDouble();
@@ -185,9 +185,9 @@ void BudgetPageBudget::changeTotalExpenses(double delta) {
             \n "Budget" - the budget
             \n "Total Expenses" - the total expenses
             \n "Remaining Budget" - the remaining budget
-            \n "Expenses" an array with Expense::to_JSON()
             \n "Index" 0-18, the budget period (0-yearly) (1-5 Q1-Q4) (6-18 jan-dec)
- *          \n @copydoc BudgetPageExpenses::to_JSON()
+            \n "Expenses" an array with Expense::to_JSON()
+*           \n @copydoc BudgetPageExpenses::to_JSON()
   * @author Katherine R
  */
 QJsonObject BudgetPageBudget::to_JSON() {
