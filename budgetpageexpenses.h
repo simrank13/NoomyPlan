@@ -1,4 +1,3 @@
-
 #ifndef EXPENSES_H
 #define EXPENSES_H
 
@@ -35,6 +34,7 @@ public:
       * @author Katherine R
      */
     explicit BudgetPageExpenses(QObject *parent = nullptr);
+
     /**
      * @brief parametrized constructor for expenses
      * @param parent parent qobject
@@ -46,6 +46,7 @@ public:
      */
     BudgetPageExpenses(QObject *parent, const QString &name, const QString &description, double price,
                        double quantity);
+
     /**
      * @brief creates an Expense object from a json
      * @param parent
@@ -54,8 +55,10 @@ public:
      *         \n "Description" - description of Expense
      *         \n "Price" - price of Expense item
      *         \n "Quantity" - quantity of items
+     *         \n "Category Index" - the index for categorization
      */
     BudgetPageExpenses(QObject *parent, const QJsonObject &Expense);
+
     /**
      * @brief creates a json with data from expense item, used for offline mode/saving
      * @return A QJson object with the values for this expense item
@@ -63,15 +66,17 @@ public:
      *         \n "Description" - description of Expense
      *         \n "Price" - price of Expense item
      *         \n "Quantity" - quantity of items
+     *         \n "Category Index" - the index for categorization
      */
     QJsonObject to_JSON() const;
+
     /**
      * 
      * @return the remove button QPushButton
       * @author Katherine R
      */
-     QPushButton *getRemoveButton();
-    
+    QPushButton *getRemoveButton();
+
     /**
      * @brief getter for expense value
      * @return price * quantity of expense item
@@ -94,33 +99,44 @@ public:
 
     ~BudgetPageExpenses();
 
+    /**
+     * sets the index for the category
+     * used to know which category expense is a member of when export/import json
+     * @param index category index
+     */
+    void setCategoryIndex(int index);
+
 signals:
     void expenseChangedSignal(double delta);
 
 public slots:
-    /**
-     * @brief Slot detects if the expense name is changed, changes the expenseName to the new one
-     * @param newName the new name for the expense
-      * @author Katherine R
-     */
+
+ /**
+ * @brief slot detects if the price or quantity for the expense has changed
+ * @param change new value
+ * @param changedType 'P' for price 'Q' for quantity
+ * @author Katherine R
+ */
     void expenseSBChangedSlot(double change, char changedType);
+
     /**
      * @brief slot detects if the description name is changed, changes the description to the new one
      * @param newDescription the new description
      @author Katherine R
      */
     void onExpenseDescriptionChangedSlot(const QString &newDescription) const;
+
     /**
-     * @brief slot detects if the price or quantity for the expense has changed
-     * @param change new value
-     * @param changedType 'P' for price 'Q' for quantity
-     * @author Katherine R
+     * @brief Slot detects if the expense name is changed, changes the expenseName to the new one
+     * @param newName the new name for the expense
+      * @author Katherine R
      */
     void onExpenseNameChangedSlot(const QString &newName) const;
 
 private:
     double price;
     double quantity;
+    int categoryIndex;
     QString *expenseName;
     QString *expenseDescription;
     QWidget *expenseObj_ExpenseWidget;

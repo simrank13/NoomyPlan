@@ -18,6 +18,7 @@
 #include <QStackedBarSeries>
 #include <QBarCategoryAxis>
 #include <QValueAxis>
+#include <QLineEdit>
 #include "budgetpagebudget.h"
 #include "budgetpageexpenses.h"
 /**
@@ -39,11 +40,13 @@ public:
      * @author - Katherine R
      */
     explicit BudgetPage(QWidget *parent = nullptr);
+
     /**
      * @brief destructor for budgetpage
       * @author Katherine R
      */
     ~BudgetPage();
+
     /**
      * @brief saves data of the budget page for offline mode
      * saves a JSON with any relevant data
@@ -55,6 +58,7 @@ public:
       * @author - Katherine R
      */
     QJsonObject to_JSON();
+
     /**
      * @brief adds json budget for offline/saves
      * imports JSON budget according to to_JSON() and adds them to the page
@@ -64,6 +68,38 @@ public:
     * @author - Katherine R
      */
     void getJSONBudget(const QJsonObject &budget);
+
+    /**
+     * @brief calculates the remaining budget for budgets[budgetPeriodIndex]
+     * for budgets[budgetPeriodIndex] :budget - total expenses
+     * \n if the remaining budget is below the financial surplus goal, the remaining budget text changes to red to notify user
+     * @author - Katherine R
+     */
+    void calculateRemainingBudget();
+
+    /**
+     * @brief creates the budget period selector widget
+     * \n allows selection of budget period (Monthly, Yearly, Quarterly) for BudgetPage using a combobox
+     * \n and (Q1-Q4) (jan-dec)
+     * @author - Katherine R
+     */
+    void createBudgetPeriodSelector();
+
+    /**
+     * @brief creates a budget selector for BudgetPage
+     * \n uses a spinbox to set the budget, connects to onBudgetChangeSlot
+      * @author - Katherine
+     */
+    void createBudgetSelector();
+
+    /**
+     * @brief creates a scrollable, dynamic list of expenses
+     * \n creates a separate expense area for every budgetpagebudget, (so that each budget period can have it's own list of expenses)
+     * \n can set the name, desc, price, and count
+     * \n calculates total and remaining budget automatically using calculateRemainingBudget
+     * @author - Katherine R
+     */
+    void createExpensesSubPage();
 
 public slots:
     /**
@@ -82,6 +118,7 @@ public slots:
      * @author - Katherine R
      */
     void onExpenseChangedSlot(double delta);
+
     /**
      * @brief Slot for when the user changes the budget period type (monthly , quarterly, yearly)
      *\n then changes the text for the budget spinbox
@@ -90,42 +127,18 @@ public slots:
      * @author - Katherine R
      */
     void onBudgetPeriodTypeChangedSlot(int index);
-     /**
-     * @brief slot detects when budget periods are changed
-     * changes the budget object when another budget period is selected I.E (jan, feb, Q1..)
-     * changes the budget label to X Budget - Y, X being quarterly/monthly/yrly, Y being Q1-Q5 jan-dec
-     * @param index index of changed Combobox
-     * @param period M for monthly Q for quarterly
-     * @author - Katherine R
-     */
+
+    /**
+    * @brief slot detects when budget periods are changed
+    * changes the budget object when another budget period is selected I.E (jan, feb, Q1..)
+    * changes the budget label to X Budget - Y, X being quarterly/monthly/yrly, Y being Q1-Q5 jan-dec
+    * @param index index of changed Combobox
+    * @param period M for monthly Q for quarterly
+    * @author - Katherine R
+    */
     void onBudgetPeriodChangeSlot(int index, char period);
-    /**
-     * @brief calculates the remaining budget for budgets[budgetPeriodIndex]
-    * for budgets[budgetPeriodIndex] :budget - total expenses
-     * @author - Katherine R
-     */
-    void calculateRemainingBudget();
-    /**
-     * @brief creates the budget period selector widget
-     * \n allows selection of budget period (Monthly, Yearly, Quarterly) for BudgetPage using a combobox
-     * \n and (Q1-Q4) (jan-dec)
-     * @author - Katherine R
-     */
-    void createBudgetPeriodSelector();
-    /**
-     * @brief creates a budget selector for BudgetPage
-     * \n uses a spinbox to set the budget, connects to onBudgetChangeSlot
-      * @author - Katherine 
-     */
-    void createBudgetSelector();
-    /**
-     * @brief creates a scrollable, dynamic list of expenses
-     * \n creates a separate expense area for every budgetpagebudget, (so that each budget period can have it's own list of expenses)
-     * \n can set the name, desc, price, and count
-     * \n calculates total and remaining budget automatically using calculateRemainingBudget 
-     * @author - Katherine R
-     */
-    void createExpensesSubPage();
+
+
     /**
      * @brief Changes the budget page variables to the new budget period
      * swaps some expense UI elements
@@ -133,12 +146,14 @@ public slots:
       * @author - Katherine R
      */
     void changeBudgetPage();
+
     /**
      * @brief creates a new expense item, adds it to the budget object and adds GUI
      * the expense item is created for the budgetpagebudget at the selected budget period
       * @author - Katherine R
      */
     void newExpense();
+
     /**
      * @brief deletes the expense item provided, removes it from the expenses QVector
      * deletes it from the budgetpagebudget for the selected budget period
@@ -147,6 +162,7 @@ public slots:
       * @author - Katherine R
      */
     void deleteExpense(BudgetPageExpenses *toDelete);
+
     /**
      * @brief "updates" the bar graph
      * creates a new graph object, replacing the old one
@@ -157,6 +173,18 @@ public slots:
       * @author - Katherine R
      */
     void updateBarGraph();
+
+    /**
+     * @brief QT Slot to detect changes in the budget goal SpinBox
+     * \n changes the budget goal variable and calculates new remaining budget
+     * @param goal new budget goal
+     * @author - Katherine R
+     */
+    void onBudgetGoalChangedSlot(double goal);
+
+    void addExpenseCategory();
+
+  void changeExpenseCategory(int index);
 
 private:
     // Budget period selector
@@ -172,6 +200,11 @@ private:
     QLabel *budgetSelector_Label;
     QDoubleSpinBox *budgetSelector_SpinBox;
     QVBoxLayout *budgetSelector_VBox;
+    QVector<BudgetPageBudget *> budgets;
+    int budgetPeriodIndex;
+    QObject *budgetsObject;
+    QLabel *budgetSelector_GoalLabel;
+    QDoubleSpinBox *budgetSelector_goalSpinBox;
 
     // Expenses subpage
     QGroupBox *expenses_Group;
@@ -179,6 +212,9 @@ private:
     QPushButton *expenses_addExpenseButton;
     QLabel *expenses_remainingBudgetLabel;
     QLabel *expenses_totalExpensesLabel;
+    QComboBox *expenses_categoriesComboBox;
+    QLineEdit *expenses_categoryLineEdit;
+    int expenses_categoriesComboBox_index;
 
     // Bar graph
     QWidget *barChart_Widget;
@@ -191,16 +227,11 @@ private:
     QValueAxis *barChart_yAxis;
     QChartView *barChart_chartView;
     QPushButton *barGraph_updateButton;
+    QStringList *barChart_categories_Quarterly;
+    QStringList *barChart_categories_Monthly;
 
-    // Core members
-    QVector<BudgetPageBudget *> budgets;
-    int budgetPeriodIndex;
     QWidget *centralWidget;
     QGridLayout *budgetLayout;
-
-    // Static data for bar chart
-    static const QStringList barChart_categories_Quarterly;
-    static const QStringList barChart_categories_Monthly;
 };
 
 #endif // BUDGETPAGE_H

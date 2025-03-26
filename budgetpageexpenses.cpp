@@ -1,30 +1,32 @@
 #include "budgetpageexpenses.h"
 
 /**
- * @brief default constructor for expenses
- * quanity is set to 1, everything set to 0 or null string
- * @param parent parent QObject if needed
-  * @author Katherine R
- */
+    * @brief default constructor for expenses
+    * quanity is set to 1, everything set to 0 or null string
+    * @param parent parent QObject if needed
+     * @author Katherine R
+    */
 BudgetPageExpenses::BudgetPageExpenses(QObject *parent)
     : QObject{parent} {
     this->expenseName = new QString("");
     this->expenseDescription = new QString("");
     this->quantity = 1;
-    this->price = 0;
+    this->price = 1;
     //creates UI objects for the expense item
-    expenseObj_ExpenseWidget = new QWidget;//the widget for the expense
-    expenseObj_addExpenseForm = new QFormLayout;//the form layout for the expense 
+    expenseObj_ExpenseWidget = new QWidget; //the widget for the expense
+    expenseObj_addExpenseForm = new QFormLayout; //the form layout for the expense
     expenseObj_Layout = new QVBoxLayout;
-    expenseObj_removeExpenseButtonWidget = new QWidget();//the widget for the expense remove button
-    expenseObj_NameLineEdit = new QLineEdit;//expense name 
+    expenseObj_removeExpenseButtonWidget = new QWidget(); //the widget for the expense remove button
+    expenseObj_NameLineEdit = new QLineEdit; //expense name
     expenseObj_DescriptionLineEdit = new QLineEdit;
     expenseObj_QuantitySpinBox = new QDoubleSpinBox;
     expenseObj_PriceSpinBox = new QDoubleSpinBox;
     //creates UI objects for removing expense buttons/hbox
-    expenseObj_removeExpenseHbox = new QHBoxLayout(expenseObj_removeExpenseButtonWidget);//hbox for the expense remove button
-    expenseObj_removeExpenseButton = new QPushButton(tr("Remove"));//the expense remove button
+    expenseObj_removeExpenseHbox = new QHBoxLayout(expenseObj_removeExpenseButtonWidget);
+    //hbox for the expense remove button
+    expenseObj_removeExpenseButton = new QPushButton(tr("Remove")); //the expense remove button
 }
+
 
 /**
  * @brief parametrized constructor for expenses
@@ -44,56 +46,60 @@ BudgetPageExpenses::BudgetPageExpenses(QObject *parent, const QString &name, con
     this->quantity = quantity;
 
     //creates UI objects for the expense item
-    expenseObj_ExpenseWidget = new QWidget;//the widget for the expense
-    expenseObj_addExpenseForm = new QFormLayout;//the form layout for the expense 
+    expenseObj_ExpenseWidget = new QWidget; //the widget for the expense
+    expenseObj_addExpenseForm = new QFormLayout; //the form layout for the expense
     expenseObj_Layout = new QVBoxLayout;
-    expenseObj_removeExpenseButtonWidget = new QWidget();//the widget for the expense remove button
-    expenseObj_NameLineEdit = new QLineEdit;//expense name 
+    expenseObj_removeExpenseButtonWidget = new QWidget(); //the widget for the expense remove button
+    expenseObj_NameLineEdit = new QLineEdit; //expense name
     expenseObj_DescriptionLineEdit = new QLineEdit;
     expenseObj_QuantitySpinBox = new QDoubleSpinBox;
     expenseObj_PriceSpinBox = new QDoubleSpinBox;
     //creates UI objects for removing expense buttons/hbox
-    expenseObj_removeExpenseHbox = new QHBoxLayout(expenseObj_removeExpenseButtonWidget);//hbox for the expense remove button
-    expenseObj_removeExpenseButton = new QPushButton(tr("Remove"));//the expense remove button
+    expenseObj_removeExpenseHbox = new QHBoxLayout(expenseObj_removeExpenseButtonWidget);
+    //hbox for the expense remove button
+    expenseObj_removeExpenseButton = new QPushButton(tr("Remove")); //the expense remove button
 }
 
 /**
- * @brief creates an Expense object from a json
- * @param parent
- * @param Expense
-*          \n "Name" - Name of Expense
- *         \n "Description" - description of Expense
- *         \n "Price" - price of Expense item
- *         \n "Quantity" - quantity of items
- */
+     * @brief creates an Expense object from a json
+     * @param parent
+     * @param Expense
+    *          \n "Name" - Name of Expense
+     *         \n "Description" - description of Expense
+     *         \n "Price" - price of Expense item
+     *         \n "Quantity" - quantity of items
+     *         \n "Category Index" - the index for categorization
+     */
 BudgetPageExpenses::BudgetPageExpenses(QObject *parent, const QJsonObject &Expense) {
     expenseName = new QString(Expense.value("name").toString());
     expenseDescription = new QString(Expense.value("description").toString());
     price = Expense.value("price").toDouble();
     quantity = Expense.value("quantity").toDouble();
+    categoryIndex = Expense.value("Category Index").toInt();
 
     //creates UI objects for the expense item
-    expenseObj_ExpenseWidget = new QWidget;//the widget for the expense
-    expenseObj_addExpenseForm = new QFormLayout;//the form layout for the expense 
+    expenseObj_ExpenseWidget = new QWidget; //the widget for the expense
+    expenseObj_addExpenseForm = new QFormLayout; //the form layout for the expense
     expenseObj_Layout = new QVBoxLayout;
-    expenseObj_removeExpenseButtonWidget = new QWidget();//the widget for the expense remove button
-    expenseObj_NameLineEdit = new QLineEdit;//expense name 
+    expenseObj_removeExpenseButtonWidget = new QWidget(); //the widget for the expense remove button
+    expenseObj_NameLineEdit = new QLineEdit; //expense name
     expenseObj_DescriptionLineEdit = new QLineEdit;
     expenseObj_QuantitySpinBox = new QDoubleSpinBox;
     expenseObj_PriceSpinBox = new QDoubleSpinBox;
     //creates UI objects for removing expense buttons/hbox
-    expenseObj_removeExpenseHbox = new QHBoxLayout(expenseObj_removeExpenseButtonWidget);//hbox for the expense remove button
-    expenseObj_removeExpenseButton = new QPushButton(tr("Remove"));//the expense remove button
+    expenseObj_removeExpenseHbox = new QHBoxLayout(expenseObj_removeExpenseButtonWidget);
+    //hbox for the expense remove button
+    expenseObj_removeExpenseButton = new QPushButton(tr("Remove")); //the expense remove button
 }
 
-/**
- * @brief creates a json with data from expense item, used for offline mode/saving
- * @return A QJson object with the values for this expense item
- *         \n "Name" - Name of Expense
- *         \n "Description" - description of Expense
- *         \n "Price" - price of Expense item
- *         \n "Quantity" - quantity of items
- */
+/** @brief creates a json with data from expense item, used for offline mode/saving
+     * @return A QJson object with the values for this expense item
+     *         \n "Name" - Name of Expense
+     *         \n "Description" - description of Expense
+     *         \n "Price" - price of Expense item
+     *         \n "Quantity" - quantity of items
+     *         \n "Category Index" - the index for categorization
+     */
 QJsonObject BudgetPageExpenses::to_JSON() const {
     QJsonObject expenseJson;
     //inserts expense item values to json
@@ -101,11 +107,13 @@ QJsonObject BudgetPageExpenses::to_JSON() const {
     expenseJson.insert("Description", *expenseDescription);
     expenseJson.insert("Price", QString::number(price));
     expenseJson.insert("Quantity", quantity);
+    expenseJson.insert("Category Index", categoryIndex);
     return expenseJson;
 }
 
+
 /**
- * @brief getter for expenbse remove button
+ *
  * @return the remove button QPushButton
   * @author Katherine R
  */
@@ -114,19 +122,19 @@ QPushButton *BudgetPageExpenses::getRemoveButton() {
 }
 
 /**
- * @brief getter for expense value
- * @return price * quantity of expense item
-  * @author Katherine R
- */
+     * @brief getter for expense value
+     * @return price * quantity of expense item
+      * @author Katherine R
+     */
 double BudgetPageExpenses::getExpense() const {
     return this->price * this->quantity;
 }
 
 /**
- * @brief Slot detects if the expense name is changed, changes the expenseName to the new one
- * @param newName the new name for the expense
-  * @author Katherine R
- */
+    * @brief Slot detects if the expense name is changed, changes the expenseName to the new one
+    * @param newName the new name for the expense
+     * @author Katherine R
+    */
 void BudgetPageExpenses::onExpenseNameChangedSlot(const QString &newName) const {
     *expenseName = newName;
     if (SHOW_DEBUG_LOGS) {
@@ -135,10 +143,10 @@ void BudgetPageExpenses::onExpenseNameChangedSlot(const QString &newName) const 
 }
 
 /**
- * @brief slot detects if the description name is changed, changes the description to the new one
- * @param newDescription the new description
- @author Katherine R
- */
+   * @brief slot detects if the description name is changed, changes the description to the new one
+   * @param newDescription the new description
+   @author Katherine R
+   */
 void BudgetPageExpenses::onExpenseDescriptionChangedSlot(const QString &newDescription) const {
     *expenseDescription = newDescription;
     if (SHOW_DEBUG_LOGS) {
@@ -146,21 +154,20 @@ void BudgetPageExpenses::onExpenseDescriptionChangedSlot(const QString &newDescr
     }
 }
 
-
 /**
- * @brief slot detects if the price or quantity for the expense has changed
- * @param change new value
- * @param changedType 'P' for price 'Q' for quantity
-  * @author Katherine R
- */
+     * @brief slot detects if the price or quantity for the expense has changed
+     * @param change new value
+     * @param changedType 'P' for price 'Q' for quantity
+     * @author Katherine R
+     */
 void BudgetPageExpenses::expenseSBChangedSlot(double change, char changedType) {
     double oldExpenses = this->quantity * this->price;
     //determines the type that was changed (price or quantity)
     switch (changedType) {
-        case 'Q'://if quantity
+        case 'Q': //if quantity
             this->quantity = change;
             break;
-        case 'P'://if price
+        case 'P': //if price
             this->price = change;
             break;
         default:
@@ -175,16 +182,16 @@ void BudgetPageExpenses::expenseSBChangedSlot(double change, char changedType) {
 }
 
 /**
- * @brief Creates the UI for the expense item
- *
- *creates spinboxes for price and quantity
- *creates forms for name and description
- *connects them to expensesSBchangedslot, onExpenseDescriptionChangedSlot, onExpenseNameChangedSlot
- *
- * @param parent QWidget to add the UI to
- * @param vbox VBox to add the UI to
-  * @author Katherine R
- */
+     * @brief Creates the UI for the expense item
+     *
+     *creates spinboxes for price and quantity
+     *creates forms for name and description
+     *connects them to expensesSBchangedslot, onExpenseDescriptionChangedSlot, onExpenseNameChangedSlot
+     *
+     * @param parent QWidget to add the UI to
+     * @param vbox VBox to add the UI to
+      * @author Katherine R
+     */
 void BudgetPageExpenses::createExpenseUI(QWidget *parent, QVBoxLayout *vbox) {
     //creates a line edit for name and description
     expenseObj_NameLineEdit->setPlaceholderText(tr("Name"));
@@ -226,10 +233,7 @@ void BudgetPageExpenses::createExpenseUI(QWidget *parent, QVBoxLayout *vbox) {
     vbox->addWidget(expenseObj_ExpenseWidget); //adds widget to the vbox
 }
 
-/**
- * @brief deletes expenses object
- @author Katherine R
- */
+
 BudgetPageExpenses::~BudgetPageExpenses() {
     delete expenseObj_NameLineEdit;
     delete expenseObj_DescriptionLineEdit;
@@ -242,4 +246,13 @@ BudgetPageExpenses::~BudgetPageExpenses() {
     delete expenseObj_Layout;
     delete expenseObj_removeExpenseButtonWidget;
     delete expenseObj_ExpenseWidget;
+}
+
+/**
+     * sets the index for the category
+     * used to know which category expense is a member of when export/import json
+     * @param index category index
+     */
+void BudgetPageExpenses::setCategoryIndex(int index) {
+    this->categoryIndex = index;
 }

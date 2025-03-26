@@ -17,6 +17,7 @@
 **/
 class BudgetPageBudget : public QObject {
     Q_OBJECT
+
 public:
     /**
      * @brief default construtor, everything set to 0.
@@ -25,6 +26,7 @@ public:
       * @author Katherine R
      */
     explicit BudgetPageBudget(QObject *parent = nullptr);
+
     /**
      * @brief semi parametrized construtor, everything set to 0, except index
      *also creates necessary UI objects
@@ -33,14 +35,18 @@ public:
       * @author Katherine R
      */
     BudgetPageBudget(QObject *parent, int budgetindex);
+
     /**
      * @brief parametrized constructor 
      * @param parent parent qobject
      * @param budget budget
      * @param totalexpense total expenses
      * @param remainingbudget remaining budget
+     * @param goal the budget goal
      */
-    BudgetPageBudget(QObject *parent, double budget, double totalexpense, double remainingbudget, int budgetindex);
+    BudgetPageBudget(QObject *parent, double budget, double totalexpense, double remainingbudget, int budgetindex,
+                     double goal);
+
     /**
     * @brief parametized constructor - creates a budget object from QJSONobject
      * @param parent parent object
@@ -49,103 +55,154 @@ public:
      @copydoc BudgetPageBudget::to_JSON()
       * @author Katherine R
      */
-    BudgetPageBudget(QObject *parent, const QJsonObject& json);
+    BudgetPageBudget(QObject *parent, const QJsonObject &json);
 
-/**
- * @brief getter for budget
- * @return budget
-  * @author Katherine R
- */
+    /**
+     * @brief getter for budget
+     * @return budget
+      * @author Katherine R
+     */
     double getBudget();
-/**
- * @brief getter for total expenses
- * @return total expenses
-  * @author Katherine R
- */
+
+    /**
+     * @brief getter for total expenses
+     * @return total expenses
+      * @author Katherine R
+     */
     double getTotalExpenses();
-/**
- *  @brief getter for remaining budgets
- * @return remaining budget
-  * @author Katherine R
- */
+
+    /**
+     *  @brief getter for remaining budgets
+     * @return remaining budget
+      * @author Katherine R
+     */
     double getRemainingBudget();
-/**
- * @brief getter for expenses qvector
- * @return expenses qvector
-  * @author Katherine R
- */    
+
+    /**
+     * @brief getter for expenses qvector
+     * @return expenses qvector
+      * @author Katherine R
+     */
     QVector<BudgetPageExpenses *> *getExpenses();
-/**
- * @brief setter for budget
- * @param newbudget new budget
-  * @author Katherine R
- */
+
+    /**
+     * @brief setter for budget
+     * @param newbudget new budget
+      * @author Katherine R
+     */
     void setBudget(double newbudget);
-/**
- * @brief setter for total expense
- * @param newtotalexpense
-  * @author Katherine R
- */
+
+    /**
+     * @brief setter for total expense
+     * @param newtotalexpense
+      * @author Katherine R
+     */
     void setTotalExpenses(double newtotalexpense);
-/**
- * @brief setter for remaining budget
- * @param newremainingbudget
-  * @author Katherine R
- */    
+
+    /**
+     * @brief setter for remaining budget
+     * @param newremainingbudget
+      * @author Katherine R
+     */
     void setRemainingBudget(double newremainingbudget);
-/**
- * @brief setter for index
- * @param index
-  * @author Katherine R
- */
+
+    /**
+     * @brief setter for index
+     * @param index
+      * @author Katherine R
+     */
     void setIndex(int index);
-/**
- * @brief changes total expenses by delta
- * \n new total =  old total + delta
- * @param delta the change
-  * @author Katherine R
- */
+
+    /**
+     * @brief changes total expenses by delta
+     * \n new total =  old total + delta
+     * @param delta the change
+      * @author Katherine R
+     */
     void changeTotalExpenses(double delta);
-/**
- * @brief Creates a json object of the budget object
- * @return json object
-            \n "Budget" - the budget
-            \n "Total Expenses" - the total expenses
-            \n "Remaining Budget" - the remaining budget
-            \n "Index" 0-18, the budget period (0-yearly) (1-5 Q1-Q4) (6-18 jan-dec)
-            \n "Expenses" an array with Expense::to_JSON()
-*           \n @copydoc BudgetPageExpenses::to_JSON()
-  * @author Katherine R
- */
+
+    /**
+   * @brief Creates a json object of the budget object
+   * @return json object
+             \n "Budget" - the budget
+             \n "Total Expenses" - the total expenses
+             \n "Remaining Budget" - the remaining budget
+             \n "Index" 0-18, the budget period (0-yearly) (1-5 Q1-Q4) (6-18 jan-dec)
+             \n "Goal" the goal for budget net, double
+             \n "Expenses" an array with Expense::to_JSON()
+   *           \n @copydoc BudgetPageExpenses::to_JSON()
+   * @author Katherine R
+   */
     QJsonObject to_JSON();
-/**
-*@Brief getter for scrollwidget 
-@author Katherine R
-@return the expenses widget
-*/
+
+    /**
+    *@Brief getter for scrollwidget
+    @author Katherine R
+    @return the expenses widget
+    */
     QWidget *getExpensescrollwidget();
-/**
-*@Brief getter for expenses scroll area 
-@author Katherine R
-@return the expenses Qscrollarea for scroll area
-*/
+
+    /**
+    *@Brief getter for expenses scroll area
+    @author Katherine R
+    @return the expenses Qscrollarea for scroll area
+    */
     QScrollArea *getExpensescrollarea();
-/**
-*@Brief getter for expenses vbox 
-@author Katherine R
-@return the expenses vbox
-*/
+
+    /**@Brief getter for expenses scroll area at index
+   *@param index - the index
+   @author Katherine R
+   @return the expenses scroll area
+   */
+    QScrollArea *getExpensescrollarea(int index);
+
+    /**
+    *@Brief getter for expenses vbox
+    @author Katherine R
+    @return the expenses vbox
+    */
     QVBoxLayout *getExpensesscrolllistvbox();
 
+    /**
+    *@Brief getter for expenses vbox at index
+    *@param index - the index
+    @author Katherine R
+    @return the expenses vbox
+    */
+    QVBoxLayout *getExpensesscrolllistvbox(int index);
+
+    /**
+      *@Brief getter for budget goal
+      @author Katherine R
+      @return the budget goal
+      */
+    double getBudgetGoal();
+
+    /**
+     * @brief setter for budget goal
+     * @param newbudgetgoal the new goal
+      * @author Katherine R
+     */
+    void setBudgetGoal(double newbudgetgoal);
+
+    /**
+     *@brief appends a new scroll area, scroll widget, and scroll list vbox to the vectors, for expenses
+     */
+    void newExpensescrollArea();
+
 private:
-    QVector<BudgetPageExpenses *> expenses;//stores expense items
+    QVector<BudgetPageExpenses *> expenses; //stores expense items
     double budget;
     double totalExpenses;
     double remainingBudget;
     int budgetIndex; // index 0 = yearly 1-5 = Q1-Q4, 6-18 = jan-dec
-    QWidget *budgetObj_expenseScrollWidget;
-    QScrollArea *budgetObj_expenseScrollArea;//scroll area for expense items
-    QVBoxLayout *budgetObj_expenseScrollListVbox;//vbox for expense items
+    double budgetGoal;
+    // QWidget *budgetObj_expenseScrollWidget;
+    QVector<QWidget *> budgetObj_expenseScrollWidget;
+    // QScrollArea *budgetObj_expenseScrollArea; //scroll area for expense items
+    QVector<QScrollArea *> budgetObj_expenseScrollArea;
+    // QVBoxLayout *budgetObj_expenseScrollListVbox; //vbox for expense items
+    QVector<QVBoxLayout *> budgetObj_expenseScrollListVbox; //vbox for expense items
 };
 
 #endif // BUDGETPAGEBUDGET_H
