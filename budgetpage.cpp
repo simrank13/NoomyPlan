@@ -22,9 +22,11 @@ BudgetPage::BudgetPage(QWidget *parent)
     budgetLayout = new QGridLayout(centralWidget);
     setCentralWidget(centralWidget);
 
+    showExpenseExceedPopup = true;
+
     createBudgetPeriodSelector(); //creates the budget period selector UI
     createBudgetSelector(); //creates a UI area to set budget
-    createExpensesSubPage(); //creates an UI area for expenses
+    createExpensesSubPage(); //creates a UI area for expenses
     updateBarGraph(); //creates the bar graph UI
     //adds bar graph update button
     barGraph_updateButton = new QPushButton("Update Graph");
@@ -37,35 +39,47 @@ BudgetPage::BudgetPage(QWidget *parent)
  * saves a JSON with any relevant data
  *
  * @return JSON with the budget data
- * \n "Budgets" JsonArray contaiting JSONs of budgetpagebudget
+ * \n "Budgets" JsonArray contaiting JSONs of BudgetPageBudget
+ * \n "Categories" A QJSonArray containing strings of the categories
  * \n specified in - @copydoc BudgetPageBudget::to_JSON()
   * @author - Katherine R
  */
 QJsonObject BudgetPage::to_JSON() {
     QJsonArray budgetJson;
     QJsonObject budgetJSonObj;
-    //saves all the budget objects using budgetpagebudget::to_JSON()
+    QJsonArray categoriesJson;
+    //saves all the budget objects using BudgetPageBudget::to_JSON()
     for (int i = 0; i <= 17; i++) {
         budgetJson.append(budgets.at(i)->to_JSON()); //adds the budget @index to json
     }
+    for (int i = 0; i < expenses_categoriesComboBox->count(); i++) {
+        categoriesJson.append(expenses_categoriesComboBox->itemText(i));
+    }
     budgetJSonObj.insert("Budgets", budgetJson);
+    budgetJSonObj.insert("Categories", categoriesJson);
     return budgetJSonObj;
 }
 
 /**
  * @brief adds json budget for offline/saves
  * imports JSON budget according to to_JSON() and adds them to the page
- * @param JSON with budget data - needs to be the same as to_JSON()
- * "Budgets" Array with budgetpagebudget JSONS
+ * @param budget JSON Object with budget data - needs to be the same as to_JSON()
+ * "Budgets" Array with BudgetPageBudget JSONS
  * \n defined in @copydoc BudgetPageBudget::to_JSON()
 * @author - Katherine R
  */
 void BudgetPage::getJSONBudget(const QJsonObject &budget) {
-    //splits JSON into buget JSON array
-    for (QJsonValueRef budgetObj: budget["Budgets"].toArray()) {
-        // qDebug()<<budgetObj.toString();
-        budgets.append(new BudgetPageBudget(this, budgetObj.toObject())); //adds them to the page
+    //splits JSON into budget JSON array
+    budgets.clear();
+    if (!budget.isEmpty() && budget.contains("Budgets")) {
+        if (budget.value("Budgets").toArray().count() == 17) {
+            //if there is enough
+            for (QJsonValueRef budgetObj: budget["Budgets"].toArray()) {
+                budgets.append(new BudgetPageBudget(this, budgetObj.toObject())); //adds them to the page
+            }
+        }
     }
+
     this->budgetPeriod_Label->setText(budget.value("Budget Period").toString());
 }
 
@@ -126,10 +140,8 @@ void BudgetPage::onExpenseChangedSlot(double delta) {
  * @author - Katherine R
  */
 void BudgetPage::onBudgetPeriodTypeChangedSlot(int index) {
-    barChart_xAxis->clear(); //removes x axis values from graph
+    barChart_xAxis->clear(); //removes x-axis values from graph
     //hides and disables the prev budget shown
-    // budgets[budgetPeriodIndex]->getExpensescrollarea()->hide(); //hides old expense area
-    // budgets[budgetPeriodIndex]->getExpensescrollarea()->setDisabled(true); //disables old expense area
     budgets[budgetPeriodIndex]->getExpensescrollarea(expenses_categoriesComboBox_index)->hide();
     //hides old expense area
     budgets[budgetPeriodIndex]->getExpensescrollarea(expenses_categoriesComboBox_index)->setDisabled(true);
@@ -188,8 +200,6 @@ void BudgetPage::onBudgetPeriodTypeChangedSlot(int index) {
  */
 void BudgetPage::onBudgetPeriodChangeSlot(int index, char period) {
     QString labelText;
-    // budgets[budgetPeriodIndex]->getExpensescrollarea()->hide(); //hides old expense area
-    // budgets[budgetPeriodIndex]->getExpensescrollarea()->setDisabled(true); //disables old expense area
     budgets[budgetPeriodIndex]->getExpensescrollarea(expenses_categoriesComboBox_index)->hide();
     //hides old expense area
     budgets[budgetPeriodIndex]->getExpensescrollarea(expenses_categoriesComboBox_index)->setDisabled(true);
@@ -232,6 +242,7 @@ void BudgetPage::onBudgetPeriodChangeSlot(int index, char period) {
  * @brief calculates the remaining budget for budgets[budgetPeriodIndex]
  * for budgets[budgetPeriodIndex] :budget - total expenses
  * \n if the remaining budget is below the financial surplus goal, the remaining budget text changes to red to notify user
+ * \n and gives popup
  * @author - Katherine R
  */
 void BudgetPage::calculateRemainingBudget() {
@@ -244,10 +255,20 @@ void BudgetPage::calculateRemainingBudget() {
     //changes text color to red to notify user of negative budget
     if (budgets.at(budgetPeriodIndex)->getRemainingBudget() < budgets.at(budgetPeriodIndex)->getBudgetGoal()) {
         expenses_remainingBudgetLabel->setStyleSheet("Color: #611808"); //red color to notify user of negative budget
+        //gives popup warning w option to ignore
+        if (showExpenseExceedPopup) {
+            QMessageBox budgetExceedpopup;
+            budgetExceedpopup.setText("Warning! \n Expenses Exceed financial surplus goal!");
+            budgetExceedpopup.setIcon(QMessageBox::NoIcon);
+            budgetExceedpopup.setStandardButtons(QMessageBox::Ok | QMessageBox::Ignore);
+            int x = budgetExceedpopup.exec();
+            if (x == QMessageBox::Ignore) {
+                showExpenseExceedPopup = false;
+            }
+        }
     } else {
         expenses_remainingBudgetLabel->setStyleSheet("Color: auto"); //default color if it's not negative
     }
-
     if (SHOW_DEBUG_LOGS) {
         qDebug() << "Remaining Budget - " << budgets.at(budgetPeriodIndex)->getRemainingBudget();
     }
@@ -264,12 +285,12 @@ void BudgetPage::createBudgetPeriodSelector() {
     budgetPeriod_GroupBox = new QGroupBox(tr(""));
     budgetPeriod_Label = new QLabel("Select Budget Period:");
     budgetPeriod_TypeComboBox = new QComboBox();
-    budgetPeriod_Vbox = new QVBoxLayout;
     budgetPeriod_TypeComboBox->addItem(tr("Quarterly")); //adds the available budget period types to the combobox
     budgetPeriod_TypeComboBox->addItem(tr("Monthly"));
     budgetPeriod_TypeComboBox->addItem(tr("Yearly"));
 
     //adds the budget period type selector to layout
+    budgetPeriod_Vbox = new QVBoxLayout;
     budgetPeriod_Vbox->addWidget(budgetPeriod_Label);
     budgetPeriod_Vbox->addWidget(budgetPeriod_TypeComboBox);
     budgetPeriod_GroupBox->setLayout(budgetPeriod_Vbox);
@@ -336,7 +357,7 @@ void BudgetPage::createBudgetSelector() {
     //connects the spinbox to set the budget variable
     connect(budgetSelector_SpinBox, &QDoubleSpinBox::valueChanged, this, &BudgetPage::onBudgetChangeSlot);
 
-    //creates a financial surplis goal selector - when remaining budget is under the surplus, it notifies user
+    //creates a financial surplus goal selector - when remaining budget is under the surplus, it notifies user
     budgetSelector_GoalLabel = new QLabel(tr("Financial Surplus Goal:"));
     budgetSelector_goalSpinBox = new QDoubleSpinBox(budgetSelector_Label);
     //sets the spinbox config
@@ -354,7 +375,7 @@ void BudgetPage::createBudgetSelector() {
 
 /**
  * @brief creates a scrollable, dynamic list of expenses
- * \n creates a separate expense area for every budgetpagebudget, (so that each budget period can have it's own list of expenses)
+ * \n creates a separate expense area for every BudgetPageBudget, (so that each budget period can have its own list of expenses)
  * \n can set the name, desc, price, and count
  * \n calculates total and remaining budget automatically using calculateRemainingBudget
  * @author - Katherine R
@@ -365,13 +386,13 @@ void BudgetPage::createExpensesSubPage() {
     expenses_vbox = new QVBoxLayout;
     //creates buttons to add expense, and text w remaining budget and total expenses
     expenses_addExpenseButton = new QPushButton(tr("Add Expense"), this); //creates a button to add new expense
-    expenses_remainingBudgetLabel = new QLabel(tr("Remaining Budget: $0.00")); //lists remainign budget
+    expenses_remainingBudgetLabel = new QLabel(tr("Remaining Budget: $0.00")); //lists remaining budget
     expenses_totalExpensesLabel = new QLabel(tr("Total Expenses: $0.00")); //lists total expenses
     //adds them to vbox
     expenses_vbox->addWidget(expenses_remainingBudgetLabel);
     expenses_vbox->addWidget(expenses_totalExpensesLabel);
 
-    //category function
+    //category part
     expenses_categoriesComboBox = new QComboBox();
     expenses_categoryLineEdit = new QLineEdit();
     //creates a QLineEdit to add categories, add with enter
@@ -405,19 +426,48 @@ void BudgetPage::createExpensesSubPage() {
     budgetLayout->addWidget(expenses_Group);
 }
 
+/**
+ * @brief getter for the set budget at the current period
+ * @return the budgeted amount, double
+ */
+double BudgetPage::getBudget() {
+    return this->budgetSelector_SpinBox->value();
+}
 
+/**
+ * @brief getter for the total expense for the budget period
+ * @return the total expense, double
+ */
+double BudgetPage::getTotalExpenses() {
+    return this->budgets[budgetPeriodIndex]->getTotalExpenses();
+}
+
+/**
+ * @brief getter for the budget surplus goal at the current period
+ * @return the surplus goal, double
+ */
+double BudgetPage::getSurplusGoal() {
+    return this->budgetSelector_goalSpinBox->value();
+}
+
+/**
+* @brief Slot called when a new expense category is detected and creates it
+* \n Doesnt do anything if it's empty
+* \n shows text saying category already exists if duplicate entry is attempted
+* \n categories are shared with all budget configurations
+* \n creates an expense category UI for every budgetpagebudget
+*/
 void BudgetPage::addExpenseCategory() {
     //category
     QString Category = expenses_categoryLineEdit->text(); //gets category text
     if (!Category.isEmpty()) {
-        //if the text isnt empty
-
+        //if the text isn't empty
         if (expenses_categoriesComboBox->findText(Category) == -1) {
-            //if the text isnt already a category
+            //if the text isn't already a category
             expenses_categoriesComboBox->addItem(Category); //adds category
-            expenses_categoryLineEdit->clear(); //clears text on line edit
+            expenses_categoryLineEdit->clear(); //clears text on the line edit
+            //creates a new vbox/scrollarea for every budget page's category's expenses, hides them
             for (BudgetPageBudget *budget: budgets) {
-                //creates a new vbox/scrollarea for every budget page
                 budget->newExpensescrollArea();
                 expenses_vbox->addWidget(budget->getExpensescrollarea(expenses_categoriesComboBox->count() - 1));
                 budget->getExpensescrollarea(expenses_categoriesComboBox->count() - 1)->hide();
@@ -427,22 +477,29 @@ void BudgetPage::addExpenseCategory() {
             budgets[budgetPeriodIndex]->getExpensescrollarea(expenses_categoriesComboBox->count() - 1)->show();
             budgets[budgetPeriodIndex]->getExpensescrollarea(expenses_categoriesComboBox->count() - 1)->
                     setDisabled(false);
+            //changes the category combobox selection to the new one
             expenses_categoriesComboBox->setCurrentIndex(expenses_categoriesComboBox->count() - 1);
         } else {
-            //gives error if its already a category
+            //gives error if it's already a category
             expenses_categoryLineEdit->setText("Error! category already exists");
             // expenses_categoryLineEdit->setStyleSheet("background-color: red");
         }
     }
 }
 
+/**
+ * @brief changes to the selected category's expense scroll area
+ * \n shows the expenses for the selected category and hides the ones for the prev selected one.
+ * @param index category index
+ */
 void BudgetPage::changeExpenseCategory(int index) {
-    //category
+    //hides prev selected category
     budgets[budgetPeriodIndex]->getExpensescrollarea(expenses_categoriesComboBox_index)->hide();
     budgets[budgetPeriodIndex]->getExpensescrollarea(expenses_categoriesComboBox_index)->setDisabled(true);
+    //shows the selected category
     budgets[budgetPeriodIndex]->getExpensescrollarea(index)->setDisabled(false);
     budgets[budgetPeriodIndex]->getExpensescrollarea(index)->show();
-    expenses_categoriesComboBox_index = index;
+    expenses_categoriesComboBox_index = index; //updates the category index var to the new one
 }
 
 
@@ -463,8 +520,6 @@ void BudgetPage::changeBudgetPage() {
         expenses_totalExpensesLabel->setText(
             "Total Expenses: $0" + QString::number(budgets.at(budgetPeriodIndex)->getTotalExpenses()));
         //shows and enables new expense area
-        // budgets[budgetPeriodIndex]->getExpensescrollarea()->show();
-        // budgets[budgetPeriodIndex]->getExpensescrollarea()->setDisabled(false);
         budgets[budgetPeriodIndex]->getExpensescrollarea(expenses_categoriesComboBox_index)->show();
         budgets[budgetPeriodIndex]->getExpensescrollarea(expenses_categoriesComboBox_index)->setDisabled(false);
         calculateRemainingBudget();
@@ -477,7 +532,7 @@ void BudgetPage::changeBudgetPage() {
 
 /**
  * @brief creates a new expense item, adds it to the budget object and adds GUI
- * the expense item is created for the budgetpagebudget at the selected budget period
+ * the expense item is created for the BudgetPageBudget at the selected budget period
   * @author - Katherine R
  */
 void BudgetPage::newExpense() {
@@ -500,7 +555,7 @@ void BudgetPage::newExpense() {
 
 /**
  * @brief deletes the expense item provided, removes it from the expenses QVector
- * deletes it from the budgetpagebudget for the selected budget period
+ * deletes it from the BudgetPageBudget for the selected budget period
  * \n and calculates snew total expense
  * @param toDelete expense item to delete
   * @author - Katherine R
@@ -524,6 +579,7 @@ void BudgetPage::deleteExpense(BudgetPageExpenses *toDelete) {
  * negative budgets show as a red bar, while positive budgets show as a black bar
  * \n trying to actually update the variables wouldn't work automatically,
  * \n so i decided to just add a button to "update" (create a new graph to replace)
+ * \n plots the financial goal as a green line
   * @author - Katherine R
  */
 void BudgetPage::updateBarGraph() {
@@ -532,14 +588,16 @@ void BudgetPage::updateBarGraph() {
     barChart_GroupVbox = new QHBoxLayout();
     barChart_Widget->setLayout(barChart_GroupVbox);
     //creates new QBarset and QStringList for labeling X axis(necessary for updating graph)
-    barChart_Value = new QBarSet("Remaining Budget");
-    barChart_Neg = new QBarSet("Remaining Budget");
+    barChart_Value = new QBarSet("Remaining Budget", new QObject());
+    barChart_Neg = new QBarSet("Remaining Budget-Negative", new QObject());
     barChart_categories_Quarterly = new QStringList{"Q1", "Q2", "Q3", "Q4"};
     barChart_categories_Monthly = new QStringList{
         "Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     };
     barChart_xAxis = new QBarCategoryAxis;
+    auto line = new QLineSeries;
+    line->setName("Financial Goal");
     int rangelow; //lowest budgets index to graph budget from
     int rangehigh; //highset budgets index to graph budget from
     //determines if it should display yearly/quarterly/monthly from current index
@@ -549,46 +607,46 @@ void BudgetPage::updateBarGraph() {
     } else if (budgetPeriodIndex <= 5) {
         rangelow = 1;
         rangehigh = 5;
-        barChart_xAxis->append(*barChart_categories_Quarterly);
+        barChart_xAxis->append(*barChart_categories_Quarterly); //adds quarters to x axis labeling
     } else {
         rangelow = 6;
         rangehigh = 17;
-        barChart_xAxis->append(*barChart_categories_Monthly);
+        barChart_xAxis->append(*barChart_categories_Monthly); //adds months to x axis labeling
     }
     //adds values from budgets to graph QBarset
     for (int i = rangelow; i <= rangehigh; i++) {
+        line->append(i - rangelow, budgets.at(i)->getBudgetGoal());
         if (budgets.at(i)->getRemainingBudget() < 0) {
             // if the remaining budget is negative
-            // barChart_Neg->append((qreal)budgets.at(i)->getRemainingBudget());
-            // barChart_Value->append((qreal)0.0);
-            *barChart_Neg << (double) budgets.at(i)->getRemainingBudget(); //adds value to negative chart
-            *barChart_Value << (qreal) 0.0; //adds 0 to positive chart
+            barChart_Neg->append((qreal) budgets.at(i)->getRemainingBudget()); //adds value to negative chart
+            barChart_Value->append((qreal) 0); //adds 0 to the positive chart
         } else {
-            // barChart_Value->append((qreal)budgets.at(i)->getRemainingBudget());
-            // barChart_Neg->append((qreal)0);
-            *barChart_Value << ((qreal) budgets.at(i)->getRemainingBudget()); //adds value to positive chart
-            *barChart_Neg << ((qreal) 0); //adds value to negative chart
+            barChart_Neg->append((qreal) 0); //adds 0 to the negative chart
+            barChart_Value->append((qreal) budgets.at(i)->getRemainingBudget()); //adds value to the positive chart
         }
     }
     //sets the colors for the bar chart bars
     barChart_Value->setColor(Qt::black);
     barChart_Neg->setColor(QColor(97, 24, 8)); //red color
     //adds values to the series
-    barChart_series = new QStackedBarSeries;
+    barChart_series = new QStackedBarSeries();
     barChart_series->append(barChart_Value);
     barChart_series->append(barChart_Neg);
     //creates the chart and adds the series(values)
     barChart_chart = new QChart();
     barChart_chart->addSeries(barChart_series);
+    barChart_chart->addSeries(line); //adds the finacial goal line
     barChart_chart->setTitle("Budget Graph");;
     //adds x and y axis
     barChart_chart->addAxis(barChart_xAxis, Qt::AlignBottom);
     barChart_series->attachAxis(barChart_xAxis);
+    line->attachAxis(barChart_xAxis);
     barChart_yAxis = new QValueAxis;
     barChart_yAxis->setLabelFormat("%5d");
     barChart_chart->addAxis(barChart_yAxis, Qt::AlignLeft);
+    line->attachAxis(barChart_yAxis);
     barChart_series->attachAxis(barChart_yAxis);
-    barChart_chart->legend()->setVisible(false);
+    barChart_chart->legend()->setVisible(true);
     //creates chartview and adds to layout
     barChart_chartView = new QChartView(barChart_chart);
     barChart_chartView->setLayout(barChart_GroupVbox);

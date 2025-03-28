@@ -1,7 +1,7 @@
 #include "budgetpagebudget.h"
 
 /**
- * @brief default construtor, everything set to 0.
+ * @brief default constructor, everything set to 0.
  *also creates necessary UI objects
  * @param parent parent qobject
   * @author Katherine R
@@ -14,22 +14,11 @@ BudgetPageBudget::BudgetPageBudget(QObject *parent)
     this->budgetIndex = 0;
     this->budgetGoal = 0;
     //creates area for expenses
-    // this->budgetObj_expenseScrollArea = new QScrollArea();//for scrolling expenses
-    this->budgetObj_expenseScrollArea.append(new QScrollArea()); //for scrolling expenses
-    // this->budgetObj_expenseScrollWidget = new QWidget();
-    this->budgetObj_expenseScrollWidget.append(new QWidget());
-    this->budgetObj_expenseScrollListVbox.append(new QVBoxLayout());
-    //sets the widget of the scroll area
-    // this->budgetObj_expenseScrollArea->setWidget(this->budgetObj_expenseScrollWidget);
-    // this->budgetObj_expenseScrollArea->setWidgetResizable(true);
-    this->budgetObj_expenseScrollArea.first()->setWidget(this->budgetObj_expenseScrollWidget.first());
-    this->budgetObj_expenseScrollArea.first()->setWidgetResizable(true);
-    // this->budgetObj_expenseScrollWidget->setLayout(this->budgetObj_expenseScrollListVbox);
-    this->budgetObj_expenseScrollWidget.first()->setLayout(this->budgetObj_expenseScrollListVbox.first());
+    newExpensescrollArea();
 }
 
 /**
- * @brief semi parametrized construtor, everything set to 0, except index
+ * @brief semi parametrized constructor, everything set to 0, except index
  *also creates necessary UI objects
  * @param parent parent qobject
  * @param budgetindex the index (0 = year, 1-5 = Q1-Q4, 6-18 = jan-dec) for to_JSON
@@ -42,19 +31,7 @@ BudgetPageBudget::BudgetPageBudget(QObject *parent, int budgetindex)
     this->remainingBudget = 0;
     this->budgetIndex = budgetindex;
     this->budgetGoal = 0;
-    //creates area for expenses
-    // this->budgetObj_expenseScrollArea = new QScrollArea();//for scrolling expenses
-    this->budgetObj_expenseScrollArea.append(new QScrollArea()); //for scrolling expenses
-    // this->budgetObj_expenseScrollWidget = new QWidget();
-    this->budgetObj_expenseScrollWidget.append(new QWidget());
-    this->budgetObj_expenseScrollListVbox.append(new QVBoxLayout());
-    //sets the widget of the scroll area
-    // this->budgetObj_expenseScrollArea->setWidget(this->budgetObj_expenseScrollWidget);
-    // this->budgetObj_expenseScrollArea->setWidgetResizable(true);
-    this->budgetObj_expenseScrollArea.first()->setWidget(this->budgetObj_expenseScrollWidget.first());
-    this->budgetObj_expenseScrollArea.first()->setWidgetResizable(true);
-    // this->budgetObj_expenseScrollWidget->setLayout(this->budgetObj_expenseScrollListVbox);
-    this->budgetObj_expenseScrollWidget.first()->setLayout(this->budgetObj_expenseScrollListVbox.first());
+    newExpensescrollArea();
 }
 
 /**
@@ -64,6 +41,7 @@ BudgetPageBudget::BudgetPageBudget(QObject *parent, int budgetindex)
  * @param totalexpense total expenses
  * @param remainingbudget remaining budget
  * @param goal budget goal
+ * @param budgetindex the index for the period of the budget (0=yearly, 1-5=quarterly, 6-18=monthly)
  */
 BudgetPageBudget::BudgetPageBudget(QObject *parent, double budget, double totalexpense, double remainingbudget,
                                    int budgetindex, double goal)
@@ -74,53 +52,33 @@ BudgetPageBudget::BudgetPageBudget(QObject *parent, double budget, double totale
     this->budgetIndex = budgetindex;
     this->budgetGoal = goal;
 
-    //creates area for expenses
-    // this->budgetObj_expenseScrollArea = new QScrollArea();//for scrolling expenses
-    this->budgetObj_expenseScrollArea.append(new QScrollArea()); //for scrolling expenses
-    // this->budgetObj_expenseScrollWidget = new QWidget();
-    this->budgetObj_expenseScrollWidget.append(new QWidget());
-    this->budgetObj_expenseScrollListVbox.append(new QVBoxLayout());
-    //sets the widget of the scroll area
-    // this->budgetObj_expenseScrollArea->setWidget(this->budgetObj_expenseScrollWidget);
-    // this->budgetObj_expenseScrollArea->setWidgetResizable(true);
-    this->budgetObj_expenseScrollArea.first()->setWidget(this->budgetObj_expenseScrollWidget.first());
-    this->budgetObj_expenseScrollArea.first()->setWidgetResizable(true);
-    // this->budgetObj_expenseScrollWidget->setLayout(this->budgetObj_expenseScrollListVbox);
-    this->budgetObj_expenseScrollWidget.first()->setLayout(this->budgetObj_expenseScrollListVbox.first());
+    newExpensescrollArea();
 }
 
 /**
-* @brief parametized constructor - creates a budget object from QJSONobject
- * @param parent parent Qobject
+* @brief parametrized constructor - creates a budget object from QJsonObject
+ * @param parent parent QOBject
  * @param json
  * \n JSON needs to be the same format as to_JSON()
  @ \n copydoc BudgetPageBudget::to_JSON()
  * @author Katherine R
  */
 BudgetPageBudget::BudgetPageBudget(QObject *parent, const QJsonObject &json) : QObject{parent} {
-    this->budget = json.value("Budget").toDouble();
-    this->totalExpenses = json.value("Total Expenses").toDouble();
-    this->remainingBudget = json.value("Remaining Budget").toDouble();
-    this->budgetIndex = json.value("Index").toInt();
-    this->budgetGoal = json.value("Goal").toDouble();
-    //splits Expenses into JSON array, then adds them
-    QJsonArray expensesArray = json.value("Expenses").toArray();
-    for (QJsonValue expense: expensesArray) {
-        this->expenses.append(new BudgetPageExpenses(this, expense.toObject())); //creates expense from QJsonObject
+    if (!json.isEmpty()) {
+        this->budget = json.value("Budget").toDouble();
+        this->totalExpenses = json.value("Total Expenses").toDouble();
+        this->remainingBudget = json.value("Remaining Budget").toDouble();
+        this->budgetIndex = json.value("Index").toInt();
+        this->budgetGoal = json.value("Goal").toDouble();
+        //splits Expenses into JSON array, then adds them
+        QJsonArray expensesArray = json.value("Expenses").toArray();
+        for (QJsonValue expense: expensesArray) {
+            this->expenses.append(new BudgetPageExpenses(this, expense.toObject())); //creates expense from QJsonObject
+        }
+        newExpensescrollArea();
+    } else {
+        qDebug() << "empty JSON import-expense";
     }
-    //creates area for expenses
-    // this->budgetObj_expenseScrollArea = new QScrollArea();//for scrolling expenses
-    this->budgetObj_expenseScrollArea.append(new QScrollArea()); //for scrolling expenses
-    // this->budgetObj_expenseScrollWidget = new QWidget();
-    this->budgetObj_expenseScrollWidget.append(new QWidget());
-    this->budgetObj_expenseScrollListVbox.append(new QVBoxLayout());
-    //sets the widget of the scroll area
-    // this->budgetObj_expenseScrollArea->setWidget(this->budgetObj_expenseScrollWidget);
-    // this->budgetObj_expenseScrollArea->setWidgetResizable(true);
-    this->budgetObj_expenseScrollArea.first()->setWidget(this->budgetObj_expenseScrollWidget.first());
-    this->budgetObj_expenseScrollArea.first()->setWidgetResizable(true);
-    // this->budgetObj_expenseScrollWidget->setLayout(this->budgetObj_expenseScrollListVbox);
-    this->budgetObj_expenseScrollWidget.first()->setLayout(this->budgetObj_expenseScrollListVbox.first());
 }
 
 /**
@@ -128,7 +86,7 @@ BudgetPageBudget::BudgetPageBudget(QObject *parent, const QJsonObject &json) : Q
  * @return budget
   * @author Katherine R
  */
-double BudgetPageBudget::getBudget() {
+double BudgetPageBudget::getBudget() const {
     return budget;
 }
 
@@ -137,7 +95,7 @@ double BudgetPageBudget::getBudget() {
  * @return total expenses
   * @author Katherine R
  */
-double BudgetPageBudget::getTotalExpenses() {
+double BudgetPageBudget::getTotalExpenses() const {
     return totalExpenses;
 }
 
@@ -146,7 +104,7 @@ double BudgetPageBudget::getTotalExpenses() {
  * @return remaining budget
   * @author Katherine R
  */
-double BudgetPageBudget::getRemainingBudget() {
+double BudgetPageBudget::getRemainingBudget() const {
     return remainingBudget;
 }
 
@@ -263,7 +221,7 @@ QScrollArea *BudgetPageBudget::getExpensescrollarea() {
 QScrollArea *BudgetPageBudget::getExpensescrollarea(int index) {
     if (index >= 0 && index < budgetObj_expenseScrollArea.count()) {
         return budgetObj_expenseScrollArea[index];
-    }
+    } else { return nullptr; };
 }
 
 /**
@@ -274,6 +232,7 @@ QScrollArea *BudgetPageBudget::getExpensescrollarea(int index) {
 QVBoxLayout *BudgetPageBudget::getExpensesscrolllistvbox() {
     return budgetObj_expenseScrollListVbox.first();
 }
+
 /**
 *@Brief getter for expenses vbox at index
 @author Katherine R
@@ -281,16 +240,17 @@ QVBoxLayout *BudgetPageBudget::getExpensesscrolllistvbox() {
 @param index the index
 */
 QVBoxLayout *BudgetPageBudget::getExpensesscrolllistvbox(int index) {
-    if (index >= 0 && index < budgetObj_expenseScrollListVbox.count()) {
+    if (index >= 0 && index < budgetObj_expenseScrollListVbox.count() && !budgetObj_expenseScrollListVbox.isEmpty()) {
         return budgetObj_expenseScrollListVbox[index];
-    }
+    } else return nullptr;
 }
+
 /**
   *@Brief getter for budget goal
   @author Katherine R
   @return the budget goal
   */
-double BudgetPageBudget::getBudgetGoal() {
+double BudgetPageBudget::getBudgetGoal() const {
     return budgetGoal;
 }
 
@@ -307,6 +267,7 @@ void BudgetPageBudget::setBudgetGoal(double newbudgetgoal) {
  *@brief appends a new scroll area, scroll widget, and scroll list vbox to the vectors, for expenses
  */
 void BudgetPageBudget::newExpensescrollArea() {
+    //creates + appends scroll area new objects to their vectors
     budgetObj_expenseScrollArea.append(new QScrollArea());
     budgetObj_expenseScrollWidget.append(new QWidget());
     budgetObj_expenseScrollListVbox.append(new QVBoxLayout());

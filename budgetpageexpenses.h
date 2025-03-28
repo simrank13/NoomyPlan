@@ -7,11 +7,8 @@
 #include <QLineEdit>
 #include<QFormLayout>
 #include<QSpinBox>
-#include<QDebug>
 #include<QMainWindow>
-#include<QWidget>
 #include<QComboBox>
-#include<QObject>
 #include<QJsonObject>
 
 #define SHOW_DEBUG_LOGS true
@@ -27,10 +24,12 @@ class BudgetPageExpenses : public QObject {
     Q_OBJECT
 
 public:
+
+
     /**
      * @brief default constructor for expenses
-     * quanity is set to 1, everything set to 0 or null string
-     * @param parent parent QObject if needed
+     * quantity and price is set to 1, everything set to 0 or null string
+     * @param parent parent QObject if need\ed
       * @author Katherine R
      */
     explicit BudgetPageExpenses(QObject *parent = nullptr);
@@ -42,10 +41,11 @@ public:
      * @param description description of the expense item
      * @param price price of expense
      * @param quantity # of items
+     * @param categoryIndex the index of category
       * @author Katherine R
      */
-    BudgetPageExpenses(QObject *parent, const QString &name, const QString &description, double price,
-                       double quantity);
+    BudgetPageExpenses(QObject *parent, const QString &name, const QString &description, double price, double quantity,
+                       int categoryIndex);
 
     /**
      * @brief creates an Expense object from a json
@@ -68,7 +68,7 @@ public:
      *         \n "Quantity" - quantity of items
      *         \n "Category Index" - the index for categorization
      */
-    QJsonObject to_JSON() const;
+    QJsonObject to_JSON();
 
     /**
      * 
@@ -110,13 +110,12 @@ signals:
     void expenseChangedSignal(double delta);
 
 public slots:
-
- /**
- * @brief slot detects if the price or quantity for the expense has changed
- * @param change new value
- * @param changedType 'P' for price 'Q' for quantity
- * @author Katherine R
- */
+    /**
+    * @brief slot detects if the price or quantity for the expense has changed
+    * @param change new value
+    * @param changedType 'P' for price 'Q' for quantity
+    * @author Katherine R
+    */
     void expenseSBChangedSlot(double change, char changedType);
 
     /**
@@ -149,6 +148,11 @@ private:
     QWidget *expenseObj_removeExpenseButtonWidget;
     QHBoxLayout *expenseObj_removeExpenseHbox;
     QPushButton *expenseObj_removeExpenseButton;
+    /**
+     *@brief creates the UI objects for BudgetPageExpenses
+     *used to eliminate repeated code on constructor
+     */
+    void createUIobjects();
 };
 
 
