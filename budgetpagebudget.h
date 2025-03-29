@@ -7,203 +7,223 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QScrollArea>
+#include <QFile>
 
+#define CSV_NAME "budgeted" //tocsv expenses file name
 /**
- * @class BudgetPageBudget
- * @brief Represents a budget with associated expenses and calculations.
- *
- * This class manages a budget, including its total expenses, remaining budget,
- * and a list of expenses. It also provides functionality to serialize and
- * deserialize budget data to/from JSON. The class supports dynamic updates to
- * expenses and recalculates the remaining budget accordingly.
- *
- * @author Katherine R
- */
+*This class stores budget and expenses information 
+* it stores the budget, remaining and total expenses
+* and stores a dynamic vector array w budgetpageexpenses
+* it also stores some UI elements for the expenses area
+* @copydoc BudgetPageExpenses
+* @author Katherine R
+**/
 class BudgetPageBudget : public QObject {
     Q_OBJECT
 
 public:
     /**
-     * @brief Constructs a BudgetPageBudget object with default values.
-     *
-     * Initializes the budget with default values for total budget, total expenses,
-     * and remaining budget. The budget index is set to 0 (yearly).
-     *
-     * @param parent The parent QObject, default is nullptr.
+     * @brief default constructor, everything set to 0.
+     *also creates necessary UI objects
+     * @param parent parent qobject
+      * @author Katherine R
      */
-    explicit BudgetPageBudget(QObject* parent = nullptr);
+    explicit BudgetPageBudget(QObject *parent = nullptr);
 
     /**
-     * @brief Constructs a BudgetPageBudget object with a specified index.
-     *
-     * Initializes the budget with default values for total budget, total expenses,
-     * and remaining budget. The budget index is set to the provided value.
-     *
-     * @param parent The parent QObject.
-     * @param budgetindex The index of the budget.
+     * @brief semi parametrized constructor, everything set to 0, except index
+     *also creates necessary UI objects
+     * @param parent parent qobject
+     * @param budgetindex the index (0 = year, 1-5 = Q1-Q4, 6-18 = jan-dec) for to_JSON
+      * @author Katherine R
      */
-    BudgetPageBudget(QObject* parent, int budgetindex);
+    BudgetPageBudget(QObject *parent, int budgetindex);
 
     /**
-     * @brief Constructs a BudgetPageBudget object with specified values.
-     *
-     * Initializes the budget with the provided values for total budget, total expenses,
-     * remaining budget, and budget index.
-     *
-     * @param parent The parent QObject.
-     * @param budget The total budget amount.
-     * @param totalexpense The total expenses.
-     * @param remainingbudget The remaining budget.
-     * @param budgetindex The index of the budget.
-     */
-    BudgetPageBudget(QObject* parent, double budget, double totalexpense, double remainingbudget, int budgetindex);
+    * @brief parametrized constructor
+    * @param parent parent qobject
+    * @param budget budget
+    * @param totalexpense total expenses
+    * @param remainingbudget remaining budget
+    * @param goal budget goal
+    * @param budgetindex the index for the period of the budget (0=yearly, 1-5=quarterly, 6-18=monthly)
+    */
+    BudgetPageBudget(QObject *parent, double budget, double totalexpense, double remainingbudget, int budgetindex,
+                     double goal);
 
     /**
-     * @brief Constructs a BudgetPageBudget object from a JSON object.
-     *
-     * Initializes the budget by deserializing data from a JSON object. The JSON object
-     * should contain the total budget, total expenses, remaining budget, and budget index.
-     *
-     * @param parent The parent QObject.
-     * @param json The JSON object containing budget data.
+    * @brief parametrized constructor - creates a budget object from QJSONobject
+     * @param parent parent object
+     * @param json
+     * JSON needs to be the same as to_JSON()
+     @copydoc BudgetPageBudget::to_JSON()
+      * @author Katherine R
      */
-    BudgetPageBudget(QObject* parent, const QJsonObject& json);
+    BudgetPageBudget(QObject *parent, const QJsonObject &json);
 
     /**
-     * @brief Gets the total budget amount.
-     *
-     * This method returns the total budget amount set for this budget.
-     *
-     * @return The total budget.
+     * @brief getter for budget
+     * @return budget
+      * @author Katherine R
      */
-    double getBudget();
+    double getBudget() const;
 
     /**
-     * @brief Gets the total expenses.
-     *
-     * This method returns the total expenses recorded for this budget.
-     *
-     * @return The total expenses.
+     * @brief getter for total expenses
+     * @return total expenses
+      * @author Katherine R
      */
-    double getTotalExpenses();
+    double getTotalExpenses() const;
 
     /**
-     * @brief Gets the remaining budget.
-     *
-     * This method returns the remaining budget, calculated as the difference
-     * between the total budget and total expenses.
-     *
-     * @return The remaining budget.
+     *  @brief getter for remaining budgets
+     * @return remaining budget
+      * @author Katherine R
      */
-    double getRemainingBudget();
+    double getRemainingBudget() const;
 
     /**
-     * @brief Gets the list of expenses.
-     *
-     * This method returns a pointer to the vector containing all expenses
-     * associated with this budget.
-     *
-     * @return A pointer to the vector of expenses.
+     * @brief getter for expenses qvector
+     * @return expenses qvector
+      * @author Katherine R
      */
-    QVector<BudgetPageExpenses*>* getExpenses();
+    QVector<BudgetPageExpenses *> *getExpenses();
 
     /**
-     * @brief Sets the total budget amount.
-     *
-     * This method updates the total budget amount and recalculates the
-     * remaining budget.
-     *
-     * @param newbudget The new budget amount.
+     * @brief setter for budget
+     * @param newbudget new budget
+      * @author Katherine R
      */
     void setBudget(double newbudget);
 
     /**
-     * @brief Sets the total expenses.
-     *
-     * This method updates the total expenses and recalculates the remaining budget.
-     *
-     * @param newtotalexpense The new total expenses.
+     * @brief setter for total expense
+     * @param newtotalexpense
+      * @author Katherine R
      */
     void setTotalExpenses(double newtotalexpense);
 
     /**
-     * @brief Sets the remaining budget.
-     *
-     * This method directly sets the remaining budget. It is typically used
-     * when loading data from a JSON object.
-     *
-     * @param newremainingbudget The new remaining budget.
+     * @brief setter for remaining budget
+     * @param newremainingbudget
+      * @author Katherine R
      */
     void setRemainingBudget(double newremainingbudget);
 
     /**
-     * @brief Sets the budget index.
-     *
-     * This method updates the budget index, which determines the period
-     * (e.g., yearly, quarterly, monthly) this budget represents.
-     *
-     * @param index The new budget index.
+     * @brief setter for index
+     * @param index
+      * @author Katherine R
      */
     void setIndex(int index);
 
     /**
-     * @brief Updates the total expenses by a delta value.
-     *
-     * This method adjusts the total expenses by the specified delta value
-     * and recalculates the remaining budget.
-     *
-     * @param delta The change in expenses.
+     * @brief changes total expenses by delta
+     * \n new total =  old total + delta
+     * @param delta the change
+      * @author Katherine R
      */
     void changeTotalExpenses(double delta);
 
     /**
-     * @brief Converts the budget data to a JSON object.
-     *
-     * This method serializes the budget data, including total budget, total expenses,
-     * remaining budget, and budget index, into a JSON object.
-     *
-     * @return The JSON object containing budget data.
-     */
+   * @brief Creates a json object of the budget object
+   * @return json object
+             \n "Budget" - the budget
+             \n "Total Expenses" - the total expenses
+             \n "Remaining Budget" - the remaining budget
+             \n "Index" 0-18, the budget period (0-yearly) (1-5 Q1-Q4) (6-18 jan-dec)
+             \n "Goal" the goal for budget net, double
+             \n "Expenses" an array with Expense::to_JSON()
+   *           \n @copydoc BudgetPageExpenses::to_JSON()
+   * @author Katherine R
+   */
     QJsonObject to_JSON();
 
     /**
-     * @brief Gets the widget for the expenses scroll area.
-     *
-     * This method returns the widget used to display the list of expenses
-     * in a scrollable area.
-     *
-     * @return The expenses scroll widget.
-     */
-    QWidget* getExpensescrollwidget();
+    *@Brief getter for scrollwidget
+    @author Katherine R
+    @return the expenses widget
+    */
+    QWidget *getExpensescrollwidget();
 
     /**
-     * @brief Gets the scroll area for expenses.
-     *
-     * This method returns the scroll area used to display the list of expenses.
-     *
-     * @return The expenses scroll area.
-     */
-    QScrollArea* getExpensescrollarea();
+    *@Brief getter for expenses scroll area
+    @author Katherine R
+    @return the expenses Qscrollarea for scroll area
+    */
+    QScrollArea *getExpensescrollarea();
+
+    /**@Brief getter for expenses scroll area at index
+   *@param index - the index
+   @author Katherine R
+   @return the expenses scroll area
+   */
+    QScrollArea *getExpensescrollarea(int index);
 
     /**
-     * @brief Gets the vertical layout for the expenses list.
-     *
-     * This method returns the vertical layout used to organize the list of expenses
-     * within the scroll area.
-     *
-     * @return The expenses scroll list layout.
+    *@Brief getter for expenses vbox
+    @author Katherine R
+    @return the expenses vbox
+    */
+    QVBoxLayout *getExpensesscrolllistvbox();
+
+    /**
+    *@Brief getter for expenses vbox at index
+    *@param index - the index
+    @author Katherine R
+    @return the expenses vbox
+    */
+    QVBoxLayout *getExpensesscrolllistvbox(int index);
+
+    /**
+      *@Brief getter for budget goal
+      @author Katherine R
+      @return the budget goal
+      */
+    double getBudgetGoal() const;
+
+    /**
+     * @brief setter for budget goal
+     * @param newbudgetgoal the new goal
+      * @author Katherine R
      */
-    QVBoxLayout* getExpensesscrolllistvbox();
+    void setBudgetGoal(double newbudgetgoal);
+
+    /**
+     *@brief appends a new scroll area, scroll widget, and scroll list vbox to the vectors, for expenses
+     */
+    void newExpensescrollArea();
+
+    /**
+    * @brief creates an expense csv file
+    * \n creates a CSV file with the name defined by macro EXPENSE_CSV_NAME_Budget period
+     * \n default would be budgeted_Q1 for Q1
+    * \n csv has variable definition on first line
+    * \n budget,total expenses, remaining budget, budget goal, budget index, budget period
+    * \n then the actual vars on the second
+    * \n then has definition on 3rd line
+    * \n expense name, expense description, expense quantity, expense price, expense category index
+    * \n followed by any expenses
+    */
+    void createBudgetPageCSV();
+
+    /**
+     * @brief gives a QString with the text of the budgetpagebudget's set budget index
+     * \n according to budgetIndex - 0 - yearly (1-4)= Q1-Q4 5-16 = jan-dec
+     * @return
+     */
+    QString getBudgetPeriodString();
 
 private:
-    QVector<BudgetPageExpenses*> expenses; // list of expenses associated with this budget.
-    double budget; // total budget amount.
-    double totalExpenses; // total expenses recorded for this budget.
-    double remainingBudget; // remaining budget, calculated as total budget minus total expenses.
-    int budgetIndex; // index of the budget (0 = yearly, 1-4 = Q1-Q4, 5-16 = Jan-Dec).
-    QWidget* budgetObj_expenseScrollWidget; // widget for the expenses scroll area.
-    QScrollArea* budgetObj_expenseScrollArea; // scroll area for displaying expenses.
-    QVBoxLayout* budgetObj_expenseScrollListVbox; // vertical layout for organizing expenses in the scroll area.
+    QVector<BudgetPageExpenses *> expenses; //stores expense items
+    double budget;
+    double totalExpenses;
+    double remainingBudget;
+    int budgetIndex; // index 0 = yearly 1-5 = Q1-Q4, 6-18 = jan-dec
+    double budgetGoal;
+    QVector<QWidget *> budgetObj_expenseScrollWidget; //vector storing a qwidget per expense category
+    QVector<QScrollArea *> budgetObj_expenseScrollArea; //vector storing qscrollarea per expense category
+    QVector<QVBoxLayout *> budgetObj_expenseScrollListVbox; //vector storing a vbox per expense category
 };
 
 #endif // BUDGETPAGEBUDGET_H

@@ -24,8 +24,6 @@ class BudgetPageExpenses : public QObject {
     Q_OBJECT
 
 public:
-
-
     /**
      * @brief default constructor for expenses
      * quantity and price is set to 1, everything set to 0 or null string
@@ -104,6 +102,13 @@ public:
      * @param index category index
      */
     void setCategoryIndex(int index);
+
+    /**
+     * @brief creates a csv entry with the expenses values
+     * @return a QString with
+     * name, description, quantity, price, category index
+     */
+    QString to_CSV();
 
 signals:
     void expenseChangedSignal(double delta);

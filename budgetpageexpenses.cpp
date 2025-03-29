@@ -242,6 +242,25 @@ void BudgetPageExpenses::setCategoryIndex(int index) {
 }
 
 /**
+ * @brief creates a csv entry with the expenses values
+ * @return a QString with
+ * name, description, quantity, price, category index
+ */
+QString BudgetPageExpenses::to_CSV() {
+    QString csv;
+    csv.append(*this->expenseName);
+    csv.append(",");
+    csv.append(*this->expenseDescription);
+    csv.append(",");
+    csv.append(std::to_string(this->quantity));
+    csv.append(",");
+    csv.append(std::to_string(this->price));
+    csv.append(",");
+    csv.append(std::to_string(this->categoryIndex));
+    return csv;
+}
+
+/**
  *@brief creates the UI objects for BudgetPageExpenses
  *used to eliminate repeated code on constructor
  *
