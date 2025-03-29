@@ -170,11 +170,10 @@ void BudgetPageExpenses::expenseSBChangedSlot(double change, char changedType) {
      *creates forms for name and description
      *connects them to expensesSBchangedslot, onExpenseDescriptionChangedSlot, onExpenseNameChangedSlot
      *
-     * @param parent QWidget to add the UI to
      * @param vbox VBox to add the UI to
       * @author Katherine R
      */
-void BudgetPageExpenses::createExpenseUI(QWidget *parent, QVBoxLayout *vbox) {
+void BudgetPageExpenses::createExpenseUI(QVBoxLayout *vbox) {
     //creates a line edit for name and description
     expenseObj_NameLineEdit->setPlaceholderText(tr("Name"));
     expenseObj_DescriptionLineEdit->setPlaceholderText(tr("Description"));

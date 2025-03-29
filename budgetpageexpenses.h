@@ -91,11 +91,10 @@ public:
      *creates forms for name and description
      *connects them to expensesSBchangedslot, onExpenseDescriptionChangedSlot, onExpenseNameChangedSlot
      *
-     * @param parent QWidget to add the UI to
      * @param vbox VBox to add the UI to
       * @author Katherine R
      */
-    void createExpenseUI(QWidget *parent = nullptr, QVBoxLayout *vbox = nullptr);
+    void createExpenseUI(QVBoxLayout *vbox = nullptr);
 
     ~BudgetPageExpenses();
 

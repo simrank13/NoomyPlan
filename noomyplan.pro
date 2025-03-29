@@ -6,19 +6,23 @@ SOURCES += main.cpp \
     budgetpagebudget.cpp \
     financialreport.cpp \
     loginpage.cpp \
-    user.cpp \
     cashflowtracking.cpp \
-    authenticatesystem.cpp
+    authenticatesystem.cpp \
+    dashboard.cpp \
+    user.cpp
 
-HEADERS += BudgetPage.h \
-    financialreport.h \
+    
+
+HEADERS += financialreport.h \
     loginpage.h \
     user.h \
     cashflowtracking.h \
     authenticatesystem.h \
     budgetpage.h \
     budgetpagebudget.h \
-    budgetpageexpenses.h
+    budgetpageexpenses.h \
+    dashboard.h \
+    inventory.h
 
 
 # Default rules for deployment.
