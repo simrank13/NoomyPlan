@@ -1,5 +1,23 @@
 #include "loginpage.h"
 #include <iostream>
+#include <QDir>
+#include <QDialog>
+#include <QTimer>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QObject>
+#include "mainwindow.h"
+
+/**
+ * @brief The LoginPage class provides a user interface for login and signup functionality.
+ *
+ * This class creates a window with input fields and buttons for user authentication.
+ * It handles login and signup operations by interacting with the authentication system.
+ * The class is responsible for validating user input, showing appropriate messages,
+ * and directing users to the main application window upon successful login.
+ *
+ * @author Simran Kullar
+ */
 
 /**
  * @brief Constructor for the LoginPage class.
@@ -12,7 +30,6 @@
  * @param mainWin Pointer to the main window of the application.
  * @param parent The parent widget (default is nullptr).
  *
- * @author Simran Kullar
  */
 LoginPage::LoginPage(AuthenticateSystem* auth, QMainWindow* mainWin, QWidget* parent)
     : QMainWindow(parent), authSystem(auth), mainWindow(mainWin) {
@@ -28,19 +45,83 @@ LoginPage::LoginPage(AuthenticateSystem* auth, QMainWindow* mainWin, QWidget* pa
     QVBoxLayout* layout = new QVBoxLayout(centralWidget);
 
     // Create and configure UI elements
-    QLabel* titleLabel = new QLabel("Business Management System - Login");
+    // Title
+    QLabel* titleLabel = new QLabel("Business Management System");
+    titleLabel->setAlignment(Qt::AlignCenter);
+    titleLabel->setStyleSheet("font-size: 24px; font-weight: bold;");
+
+    // Subtitle
+    QLabel* loginLabel = new QLabel("Login");
+    loginLabel->setAlignment(Qt::AlignCenter);
+    loginLabel->setStyleSheet("font-size: 16px; color: gray;");
+
+    // Create the user icon
+    QLabel* userIcon = new QLabel();
+    QPixmap userPixmap("user.png");
+
+    if (!userPixmap.isNull()) {
+        userIcon->setPixmap(userPixmap.scaled(120, 120, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        userIcon->setAlignment(Qt::AlignCenter);
+    }
+    else {
+        userIcon->setAlignment(Qt::AlignCenter);
+        userIcon->setStyleSheet("font-size: 32px;");
+    }
+
     idInput = new QLineEdit();
     idInput->setPlaceholderText("Enter your ID");
+    idInput->setFixedWidth(200); // match total button width
+
+    QHBoxLayout* idRow = new QHBoxLayout();
+    idRow->addStretch();             // push content to center
+    idRow->addWidget(idInput);
+    idRow->addStretch();
+
+            // add the row to the main vertical layout
+
     loginButton = new QPushButton("Login");
     signupButton = new QPushButton("Sign Up");
     statusLabel = new QLabel("");
 
+    loginButton->setFixedWidth(200);
+    signupButton->setFixedWidth(200);
+
+    
+
+
+
+    QLabel* noteLabel = new QLabel("Note: ID must be at least 5 characters long.");
+    noteLabel->setStyleSheet("color: gray; font-size: 12px;");
+    noteLabel->setAlignment(Qt::AlignCenter);
+
     // Add UI elements to the layout
+
     layout->addWidget(titleLabel);
-    layout->addWidget(idInput);
+    layout->addWidget(userIcon);
+    layout->addWidget(loginLabel);
+    //layout->addWidget(idInput);
+    
+
+    //QHBoxLayout* buttonRow = new QHBoxLayout();
+    //buttonRow->addStretch();  
+    layout->addLayout(idRow);
+    layout->addSpacing(25);
+    // pushes buttons to center
+    //buttonRow->addWidget(loginButton);
+    //buttonRow->addWidget(signupButton);
+    //buttonRow->addStretch();             // pushes buttons to center
+    //layout->addLayout(buttonRow);
     layout->addWidget(loginButton);
+    layout->addSpacing(2);
     layout->addWidget(signupButton);
+
     layout->addWidget(statusLabel);
+    layout->addWidget(noteLabel);
+
+
+    layout->setAlignment(loginButton, Qt::AlignHCenter);
+    layout->setAlignment(signupButton, Qt::AlignHCenter);
+
 
     // Connect button signals to slots
     connect(loginButton, &QPushButton::clicked, this, &LoginPage::handleLogin);
@@ -60,46 +141,63 @@ LoginPage::LoginPage(AuthenticateSystem* auth, QMainWindow* mainWin, QWidget* pa
  *
  */
 void LoginPage::handleLogin() {
-    // Get the user ID from input field and remove any leading/trailing whitespace
     QString id = idInput->text().trimmed();
 
-    // Log the login attempt to console for debugging
+    if (id.isEmpty()) {
+        statusLabel->setText("❌ ID is required. Please try again.");
+        statusLabel->setStyleSheet("color: red; font-size: 13px;");
+        statusLabel->setAlignment(Qt::AlignCenter);
+        return;
+    }
+
+    if (id.length() < 5) {
+        statusLabel->setText("❌ ID must be at least 5 characters long.");
+        statusLabel->setAlignment(Qt::AlignCenter);
+        statusLabel->setStyleSheet("color: red; font-size: 13px;");
+        statusLabel->setAlignment(Qt::AlignCenter);
+        return;
+    }
+
     std::cout << "Attempting login for user: " << id.toStdString() << std::endl;
 
-    // Check if the account is locked due to too many failed attempts
+    // First, check if the account is locked
     if (authSystem->isAccountLocked(id)) {
-        // Display lock message to user
-        statusLabel->setText("Account is locked! Try again in 1 minute.");
-        // Log the lock status to console
-        std::cout << "UI Message: Account " << id.toStdString() << " is locked! Attempts Blocked." << std::endl;
-        return; // Exit function early
+        std::cout << "[DEBUG] showLockDialog triggered!\n";
+        showLockDialog();
+        return;
     }
 
-    // Verify if the user exists in the authentication system
     if (!authSystem->userExists(id)) {
-        // Inform user they need to sign up first
-        statusLabel->setText("✖️ You are not signed up. Please sign up first.");
-        // Log the redirect suggestion to console
-        std::cout << "User " << id.toStdString() << " not found. Redirecting to sign up." << std::endl;
-        return; // Exit function early
+        statusLabel->setText("❌ You are not signed up. Please sign up first.");
+        statusLabel->setStyleSheet("color: red; font-size: 13px;");
+        statusLabel->setAlignment(Qt::AlignCenter);
+        return;
     }
 
-    // Attempt to authenticate the user with provided credentials
-    if (authSystem->authenticateUser(id)) {
-        // Display success message
-        statusLabel->setText("✔️ Login successful!");
-        // Log successful login to console
-        std::cout << "User " << id.toStdString() << " logged in successfully." << std::endl;
-        // Show the main application window
-        mainWindow->show();
-        // Close the login window
-        this->close();
+    bool success = authSystem->authenticateUser(id);
+
+    if (success) {
+        MainWindow* realMainWindow = qobject_cast<MainWindow*>(mainWindow);
+        if (realMainWindow) {
+            realMainWindow->setCurrentUserId(id);
+            realMainWindow->show();
+            this->close();
+        }
+        else {
+            qDebug() << "Failed to cast QMainWindow* to MainWindow*";
+            statusLabel->setStyleSheet("color: red; font-size: 13px;");
+            statusLabel->setAlignment(Qt::AlignCenter);
+        }
     }
     else {
-        // Display error message for failed authentication
-        statusLabel->setText("✖️ Incorrect login. Try again.");
+        statusLabel->setText("❌ Incorrect login. Try again.");
+        statusLabel->setStyleSheet("color: red; font-size: 13px;");
+        statusLabel->setAlignment(Qt::AlignCenter);
     }
+
 }
+
+
 
 /**
  * @brief Handles the signup button click event.
@@ -112,35 +210,65 @@ void LoginPage::handleLogin() {
  * 3. Checks if the user already exists
  * 4. Creates a new user with default role "User" if all checks pass
  *
- */
-void LoginPage::handleSignup() {
-    // Get the user ID from input field and remove any leading/trailing whitespace
-    QString id = idInput->text().trimmed();
+ */void LoginPage::handleSignup() {
+     QString id = idInput->text().trimmed();
 
-    // Check if the ID field is empty
-    if (id.isEmpty()) {
-        // Display error message for empty ID
-        statusLabel->setText("✖️ID cannot be empty.");
-        return; // Exit function early
-    }
+     if (id.isEmpty()) {
+         statusLabel->setText("❌ ID is required. Please try again.");
+         statusLabel->setStyleSheet("color: red; font-size: 13px;");
+         statusLabel->setAlignment(Qt::AlignCenter);
+         return;
+     }
 
-    // Check if the account is currently locked (prevents creating new accounts from locked IPs)
-    if (authSystem->isAccountLocked(id)) {
-        // Display lock message to user
-        statusLabel->setText("Account is locked! You cannot create an account right now.");
-        return; // Exit function early
-    }
+     if (id.length() < 5) {
+         statusLabel->setText("❌ ID must be at least 5 characters long.");
+         statusLabel->setStyleSheet("color: red; font-size: 13px;");
+         statusLabel->setAlignment(Qt::AlignCenter);
+         return;
+     }
 
-    // Check if user already exists in the system
-    if (authSystem->userExists(id)) {
-        // Inform user they should log in instead of signing up again
-        statusLabel->setText("⚠ You already signed up. Please log in.");
-        return; // Exit function early
-    }
+     // Check again if user already exists
+     if (authSystem->userExists(id)) {
+         statusLabel->setText("⚠️ You already signed up. Please log in.");
+         statusLabel->setStyleSheet("color: red; font-size: 13px;");
+         statusLabel->setAlignment(Qt::AlignCenter);
+         return;
+     }
 
-    // Add the new user to the authentication system with default role "User"
-    authSystem->addUser(id, "User");
+     // If they don't exist, add them and show success
+     authSystem->addUser(id, "User");
+     statusLabel->setText("✅ Account created successfully! Please log in.");
+     statusLabel->setStyleSheet("color: green; font-size: 13px;");
+     statusLabel->setAlignment(Qt::AlignCenter);
+ }
 
-    // Display success message and prompt user to log in
-    statusLabel->setText("✔️ Account created successfully! Please log in.");
-}
+ void LoginPage::showLockDialog() {
+     QDialog* lockDialog = new QDialog(this);
+     lockDialog->setWindowTitle("🔒 Account Locked");
+     lockDialog->setModal(true);
+     lockDialog->setWindowFlags(lockDialog->windowFlags() & ~Qt::WindowCloseButtonHint); // Disable close
+
+     QVBoxLayout* dialogLayout = new QVBoxLayout(lockDialog);
+     QLabel* countdownLabel = new QLabel("🔒 Your account is temporarily locked.\n\nPlease wait 60 seconds before trying again.");
+     countdownLabel->setAlignment(Qt::AlignCenter);
+     dialogLayout->addWidget(countdownLabel);
+
+     QTimer* countdownTimer = new QTimer(lockDialog);
+     int* remainingTime = new int(60); // heap allocated for lambda
+
+     QObject::connect(countdownTimer, &QTimer::timeout, lockDialog, [=]() mutable {
+         (*remainingTime)--;
+         countdownLabel->setText(QString("🚫 ACCOUNT LOCKED\n\nTime remaining: %1 seconds").arg(*remainingTime));
+
+         if (*remainingTime <= 0) {
+             countdownTimer->stop();
+             delete remainingTime;
+             lockDialog->accept(); // close dialog
+         }
+         });
+
+     countdownTimer->start(1000); // update every second
+     lockDialog->exec();          // block interaction
+
+   
+ }

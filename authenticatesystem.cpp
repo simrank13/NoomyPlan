@@ -1,5 +1,5 @@
 /**
-* @file authenticatesystem.cpp
+* @class authenticatesystem.cpp
 * @brief Implementation of the AuthenticateSystem class.
 *
 * This file contains the implementation of the AuthenticateSystem class, which
@@ -9,7 +9,17 @@
 * @author Simran Kullar
 */
 #include "authenticatesystem.h"
-#include <iostream>  
+#include <iostream> 
+#include <QDialog>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QTimer>
+#include <QString>
+#include <QObject>
+#include <QFile>
+#include <QTextStream>
+
+const QString USERS = "users.txt";
 
 /**
  * @class AuthenticateSystem
@@ -25,7 +35,9 @@
   * Initializes the authentication system and sets up necessary data structures
   * for tracking users and failed login attempts.
   */
-AuthenticateSystem::AuthenticateSystem() {}
+AuthenticateSystem::AuthenticateSystem() {
+    loadUsersFromFile();
+}
 
 /**
  * @brief Authenticates a user based on their user ID.
@@ -96,23 +108,45 @@ bool AuthenticateSystem::authenticateUser(const QString& userID) {
  *
  * @param userID The ID of the user whose account should be locked.
  *
- */
-void AuthenticateSystem::lockAccount(const QString& userID) {
-    // Set the account status to locked in the tracking map
-    lockedAccounts[userID] = true;
+ */void AuthenticateSystem::lockAccount(const QString& userID) {
+     lockedAccounts[userID] = true;
+     failedAttempts[userID] = 0;
 
-    // Notify through console that the account has been locked
-    std::cout << "Account " << userID.toStdString() << " is now LOCKED for 1 minute :(" << std::endl;
+     // Create the lockout popup dialog
+     QDialog* lockDialog = new QDialog();
+     lockDialog->setWindowTitle("Account Locked");
+     lockDialog->setModal(true); // Blocks interaction with other windows
+     lockDialog->setWindowFlags(lockDialog->windowFlags() & ~Qt::WindowCloseButtonHint); // Disable close button
 
-    QTimer::singleShot(60000, [this, userID]() {
-        // After timeout, set the account status back to unlocked
-        lockedAccounts[userID] = false;
-        // Reset the failed attempts counter to give the user a fresh start
-        failedAttempts[userID] = 0;
-        // Notify through console that the automatic unlock has occurred
-        std::cout << "✔️ Account " << userID.toStdString() << " is now UNLOCKED!" << std::endl;
-        });
-}
+     QLabel* countdownLabel = new QLabel("ACCOUNT LOCKED\n\nTime remaining: 60 seconds");
+     countdownLabel->setAlignment(Qt::AlignCenter);
+
+     QVBoxLayout* layout = new QVBoxLayout(lockDialog);
+     layout->addWidget(countdownLabel);
+     lockDialog->setLayout(layout);
+     lockDialog->resize(300, 150);
+
+     int* remainingTime = new int(60);
+     QTimer* timer = new QTimer(lockDialog);
+     timer->setInterval(1000); // 1 second
+
+     QObject::connect(timer, &QTimer::timeout, [=]() mutable {
+         (*remainingTime)--;
+
+         countdownLabel->setText(QString("ACCOUNT LOCKED\n\nTime remaining: %1 seconds").arg(*remainingTime));
+
+         if (*remainingTime <= 0) {
+             timer->stop();
+             lockedAccounts[userID] = false;
+             delete remainingTime;
+             lockDialog->accept(); // Closes the dialog
+         }
+         });
+
+     timer->start();
+     lockDialog->exec(); // Show and block until finished
+ }
+
 
 /**
  * @brief Checks if a user account is currently locked.
@@ -164,6 +198,8 @@ void AuthenticateSystem::addUser(const QString& userID, const QString& role) {
     users[userID] = new User(userID, role);
     // Notify through console that the user creation was successful
     std::cout << "New account created for " << userID.toStdString() << ". You can now log in!" << std::endl;
+    saveUsersToFile();
+
 }
 
 /**
@@ -180,3 +216,32 @@ bool AuthenticateSystem::userExists(const QString& userID) {
     // If the userID is found, return true; otherwise, return false.
     return users.find(userID) != users.end();
 }
+
+void AuthenticateSystem::saveUsersToFile() {
+    QFile file(USERS);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        for (const auto& pair : users) {
+            out << pair.first << "," << pair.second->getRole() << "\n";
+        }
+        file.close();
+    }
+}
+
+void AuthenticateSystem::loadUsersFromFile() {
+    QFile file(USERS);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream in(&file);
+        while (!in.atEnd()) {
+            QString line = in.readLine();
+            QStringList parts = line.split(",");
+            if (parts.size() == 2) {
+                QString id = parts[0];
+                QString role = parts[1];
+                users[id] = new User(id, role);
+            }
+        }
+        file.close();
+    }
+}
+

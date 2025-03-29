@@ -1,5 +1,31 @@
 steps to compile code: 
 
+to compile code locally:
+use CMakeLists.txt and VisualStudio to run code
+(.cpp and .h files are in work/work/test)
+
+Have qt installed and cmake
+
+Qt installation: https://www.qt.io/download-qt-installer 
+
+Note: 
+- Also install all the Qt visual tool extensions in visual studio
+- When you create the new project remember to choose the cmake option 
+
+When using CMakeLists.txt 
+
+1. right click and click on the Delete Cache and Reconfigure
+2. Then click on the dropdown menu beside the "Select Startup Item" which is at the very top 
+3. click NoomyPlan.exe
+4. click the run icon and it will run
+
+Steps 1 to 4 should work for both windows and mac since these steps are done within Visual Studio
+
+
+===================================================================================================================================================================
+THESE STEPS WERE FOR GAUL BUT SINCE WE ARE USING QCHART, IT WONT COMPILE IN GAUL SO PLEASE IGNORE THESE STEPS SINCE AND USE ABOVE STEPS TO COMPILE LOCALLY
+===================================================================================================================================================================
+
 The following steps will work on putty (and if using VcXsrv server to run code using X server)
 
 To run on putty:

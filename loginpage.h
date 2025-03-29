@@ -7,6 +7,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include "authenticatesystem.h"
+#include "mainwindow.h"
 
 /**
  * @brief The LoginPage class provides a user interface for login and signup functionality.
@@ -19,24 +20,57 @@
  * @author Simran Kullar
  */
 class LoginPage : public QMainWindow {
+    Q_OBJECT
 private:
-    /** @brief Input field for user ID */
+    /**
+ * @brief Input field for user ID.
+ *
+ * This QLineEdit widget allows the user to enter their unique identifier (e.g., username or email).
+ * It is used during the login or signup process to identify the user.
+ */
     QLineEdit* idInput;
 
-    /** @brief Button to trigger login functionality */
+    /**
+     * @brief Button to trigger login functionality.
+     *
+     * This QPushButton widget is used to initiate the login process. When clicked, it validates
+     * the user's credentials using the authentication system and grants access if successful.
+     */
     QPushButton* loginButton;
 
-    /** @brief Button to trigger signup functionality */
+    /**
+     * @brief Button to trigger signup functionality.
+     *
+     * This QPushButton widget is used to initiate the signup process. When clicked, it allows
+     * new users to create an account by providing necessary details and storing them in the system.
+     */
     QPushButton* signupButton;
 
-    /** @brief Label to display status messages and feedback to the user */
+    /**
+     * @brief Label to display status messages and feedback to the user.
+     *
+     * This QLabel widget is used to provide real-time feedback to the user, such as success messages,
+     * error notifications, or instructions during the login or signup process.
+     */
     QLabel* statusLabel;
 
-    /** @brief Pointer to the authentication system for user verification */
+    /**
+     * @brief Pointer to the authentication system for user verification.
+     *
+     * This AuthenticateSystem object handles user authentication, including login and signup operations.
+     * It verifies user credentials and manages account creation and validation.
+     */
     AuthenticateSystem* authSystem;
 
-    /** @brief Pointer to the main application window to show after successful login */
+    /**
+     * @brief Pointer to the main application window to show after successful login.
+     *
+     * This QMainWindow widget represents the main interface of the application. It is displayed
+     * to the user after they successfully log in, providing access to the application's features.
+     */
     QMainWindow* mainWindow;
+
+    void showLockDialog();
 
 public:
     /**

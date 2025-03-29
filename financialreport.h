@@ -20,11 +20,22 @@ class FinancialReportGenerator {
 public:
     /**
      * @brief Default constructor for FinancialReportGenerator.
+     * 
+     * Initializes a new instance of the FinancialReportGenerator class.
+     * This constructor sets up the necessary internal state and resources
+     * required for generating financial reports. It ensures that all
+     * member variables are initialized to their default values.
      */
     FinancialReportGenerator();
 
     /**
      * @brief Destructor for FinancialReportGenerator.
+     * 
+     * Cleans up resources used by the FinancialReportGenerator instance.
+     * This includes releasing any dynamically allocated memory and ensuring
+     * that all internal data structures are properly deallocated to prevent
+     * memory leaks. The destructor is automatically called when the object
+     * goes out of scope or is explicitly deleted.
      */
     ~FinancialReportGenerator();
 
@@ -36,13 +47,13 @@ public:
      * description, amount, payment method, and category.
      */
     struct Transaction {
-        QString date; ///< The date of the transaction.
-        QString transactionID; ///< The unique ID of the transaction.
-        QString type; ///< The type of the transaction (e.g., "Income" or "Expense").
-        QString description; ///< A description of the transaction.
-        double amount; ///< The amount of the transaction.
-        QString paymentMethod; ///< The payment method used for the transaction.
-        QString category; ///< The category of the transaction (e.g., "Food", "Transport").
+        QString date; // The date of the transaction.
+        QString transactionID; // The unique ID of the transaction.
+        QString type; // The type of the transaction (e.g., "Income" or "Expense").
+        QString description; // A description of the transaction.
+        double amount; // The amount of the transaction.
+        QString paymentMethod; // The payment method used for the transaction.
+        QString category; // The category of the transaction (e.g., "Food", "Transport").
     };
 
     /**
@@ -88,7 +99,7 @@ public:
     void generateBalanceSheetReport(const QString& outputFilename);
 
 private:
-    QList<Transaction> transactions; ///< List of transactions loaded from the CSV file.
+    QList<Transaction> transactions; // List of transactions loaded from the CSV file.
 };
 
 #endif // FINANCIALREPORT_H
