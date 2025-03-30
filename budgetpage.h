@@ -22,6 +22,7 @@
 #include <QStackedBarSeries>
 #include <QBarCategoryAxis>
 #include <QValueAxis>
+#include <QFileDialog>
 #include "budgetpagebudget.h"
 #include "budgetpageexpenses.h"
 /**
@@ -52,13 +53,12 @@ public:
     ~BudgetPage();
 
     /**
-     * @brief saves data of the budget page for offline mode
-     * saves a JSON with any relevant data
+     * @brief saves data for budget in a JSON format
      *
-     * 
      * @return JSON with the budget data
-     * \n "Budgets" JsonArray contaiting JSONs of BudgetPageBudget
-     * \n specified in - @copydoc BudgetPageBudget::to_JSON()
+        * \n "Budgets" JsonArray contaiting JSONs of BudgetPageBudget
+         * \n"Categories" A QJSonArray containing strings of the categories
+         * - specified in - @copydoc BudgetPageBudget::to_JSON()
       * @author - Katherine R
      */
     QJsonObject to_JSON();
@@ -143,6 +143,17 @@ public slots:
     */
     void onBudgetPeriodChangeSlot(int index, char period);
 
+    /**
+    *@brief  creates a new expense category
+    * \n Doesnt do anything if name/description is empty
+    * \n shows text saying category already exists if duplicate entry is attempted
+    * \n categories are shared with all budget configurations
+    * \n creates an expense category UI for every budgetpagebudget
+     * @param name the category name
+     * @param description the category description
+     */
+    void newExpenseCategory(QString name, QString description);
+
 private slots:
     /**
      * @brief Changes the budget page variables to the new budget period
@@ -190,6 +201,7 @@ private slots:
     */
     void addExpenseCategory();
 
+
     /**
      * @brief changes to the selected category's expense scroll area
      * \n shows the expenses for the selected category and hides the ones for the prev selected one.
@@ -203,6 +215,8 @@ private slots:
      * \n the file format is defined by @copydoc BudgetPageBudget::createBudgetPageCSV
      */
     void createBudgetsCSV();
+
+    void importCSV();
 
 private:
     // Budget period selector
@@ -231,9 +245,14 @@ private:
     QLabel *expenses_remainingBudgetLabel;
     QLabel *expenses_totalExpensesLabel;
     QComboBox *expenses_categoriesComboBox;
-    QLineEdit *expenses_categoryLineEdit;
+    QLineEdit *expenses_categoryNameLineEdit;
     int expenses_categoriesComboBox_index;
     bool showExpenseExceedPopup;
+    QLineEdit *expenses_categoryDescriptionLineEdit;
+    QVector<QString> expenses_categoryDescriptions;
+    QLabel *expenses_categoryLabel;
+    QGroupBox *expenses_categoryGroupBox;
+    QVBoxLayout *expenses_categoryVbox;
 
     // Bar graph
     QWidget *barChart_Widget;
@@ -248,13 +267,16 @@ private:
     QPushButton *barGraph_updateButton;
     QStringList *barChart_categories_Quarterly;
     QStringList *barChart_categories_Monthly;
- QLineSeries *barChart_goalLine;
+    QLineSeries *barChart_goalLine;
 
 
     QWidget *centralWidget;
     QGridLayout *budgetLayout;
     QString userId;
- QPushButton *createCSVbutton;
+    QPushButton *createCSVbutton;
+    QPushButton *importButton;
+    QVBoxLayout *budgetButtonVbox;
+    QGroupBox *budgetButtonGroupBox;
 
     /**
       * @brief calculates the remaining budget for budgets[budgetPeriodIndex]

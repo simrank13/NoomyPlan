@@ -195,6 +195,12 @@ public:
     void newExpensescrollArea();
 
     /**
+     * @brief returns the number of category vboxes in the budgetpage qvector
+     * @return the count
+     */
+    int getCategoriesCount();
+
+    /**
     * @brief creates an expense csv file
     * \n creates a CSV file with the name defined by macro EXPENSE_CSV_NAME_Budget period
      * \n default would be budgeted_Q1 for Q1
@@ -214,6 +220,9 @@ public:
      */
     QString getBudgetPeriodString();
 
+ void setbudgetCategoryNames(QString newName);
+ void setBudgetCategoryDescriptions(QString newDescription);
+
 private:
     QVector<BudgetPageExpenses *> expenses; //stores expense items
     double budget;
@@ -221,6 +230,8 @@ private:
     double remainingBudget;
     int budgetIndex; // index 0 = yearly 1-5 = Q1-Q4, 6-18 = jan-dec
     double budgetGoal;
+    QStringList *budgetCategoryNames;
+    QStringList *budgetCategoryDescriptions;
     QVector<QWidget *> budgetObj_expenseScrollWidget; //vector storing a qwidget per expense category
     QVector<QScrollArea *> budgetObj_expenseScrollArea; //vector storing qscrollarea per expense category
     QVector<QVBoxLayout *> budgetObj_expenseScrollListVbox; //vector storing a vbox per expense category

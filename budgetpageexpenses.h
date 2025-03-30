@@ -110,6 +110,36 @@ public:
      */
     QString to_CSV();
 
+    /**
+     * @brief setter for name
+     * @param name
+     */
+    void setExpenseName(QString name);
+
+    /**
+ * @brief setter for description
+ * @param description
+ */
+    void setExpenseDescription(QString description);
+
+    /**
+ * @brief setter for price
+ * @param price the price
+ */
+    void setExpensePrice(double price);
+
+    /**
+ * @brief setter for quantity
+ * @param quantity the quantity
+ */
+    void setExpenseQuantity(double quantity);
+
+    /**
+    * @brief setter for categoryindex
+    * @param categoryindex the category index
+    */
+    void setCategoryindex(int categoryindex);
+
 signals:
     void expenseChangedSignal(double delta);
 
@@ -140,6 +170,8 @@ private:
     double price;
     double quantity;
     int categoryIndex;
+
+private:
     QString *expenseName;
     QString *expenseDescription;
     QWidget *expenseObj_ExpenseWidget;

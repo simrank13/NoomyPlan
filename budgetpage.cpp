@@ -28,26 +28,40 @@ BudgetPage::BudgetPage(QWidget *parent)
     createBudgetSelector(); //creates a UI area to set budget
     createExpensesSubPage(); //creates a UI area for expenses
     updateBarGraph(); //creates the bar graph UI
-    //adds bar graph update button
-    barGraph_updateButton = new QPushButton("Update Graph");
-    budgetLayout->addWidget(barGraph_updateButton, 1, 1);
-    connect(barGraph_updateButton, &QPushButton::clicked, this, &BudgetPage::updateBarGraph); //connects it to update
 
-    //creates a button to create csv for budgets
+    //creates a section for csv import/export and bar graph update
+    budgetButtonVbox = new QVBoxLayout();
+    budgetButtonGroupBox = new QGroupBox();
+    budgetButtonGroupBox->setLayout(budgetButtonVbox);
+    budgetLayout->addWidget(budgetButtonGroupBox, 0, 1);
+
+
+    //creates a button to create CSV file for  budgets
     createCSVbutton = new QPushButton(tr("Create CSV"));
     connect(createCSVbutton, &QPushButton::clicked, this,
             &BudgetPage::createBudgetsCSV);
-    budgetLayout->addWidget(createCSVbutton, 0, 1);
+    createCSVbutton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+
+    budgetButtonVbox->addWidget(createCSVbutton);
+
+    importButton = new QPushButton(tr("Import CSV"));
+    connect(importButton, &QPushButton::clicked, this, &BudgetPage::importCSV);
+    importButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+    budgetButtonVbox->addWidget(importButton);
+
+    //adds button to update the bar graph
+    barGraph_updateButton = new QPushButton("Update Graph");
+    connect(barGraph_updateButton, &QPushButton::clicked, this, &BudgetPage::updateBarGraph); //connects it to update
+    budgetButtonVbox->addWidget(barGraph_updateButton);
 }
 
 /**
- * @brief saves data of the budget page for offline mode
- * saves a JSON with any relevant data
+ * @brief saves data for budget in a JSON format
  *
  * @return JSON with the budget data
- * \n "Budgets" JsonArray contaiting JSONs of BudgetPageBudget
- * \n "Categories" A QJSonArray containing strings of the categories
- * \n specified in - @copydoc BudgetPageBudget::to_JSON()
+    * \n "Budgets" JsonArray contaiting JSONs of BudgetPageBudget
+     * \n"Categories" A QJSonArray containing strings of the categories
+     * - specified in - @copydoc BudgetPageBudget::to_JSON()
   * @author - Katherine R
  */
 QJsonObject BudgetPage::to_JSON() {
@@ -67,7 +81,7 @@ QJsonObject BudgetPage::to_JSON() {
 }
 
 /**
- * @brief adds json budget for offline/saves
+ * @brief loads json budget for offline/saves
  * imports JSON budget according to to_JSON() and adds them to the page
  * @param budget JSON Object with budget data - needs to be the same as to_JSON()
  * "Budgets" Array with BudgetPageBudget JSONS
@@ -247,7 +261,8 @@ void BudgetPage::onBudgetPeriodChangeSlot(int index, char period) {
 /**
  * @brief calculates the remaining budget for budgets[budgetPeriodIndex]
  * for budgets[budgetPeriodIndex] :budget - total expenses
- * \n if the remaining budget is below the financial surplus goal, the remaining budget text changes to red to notify user
+ * \n if the remaining budget is below the financial surplus goal,
+ * the remaining budget text changes to red to notify user
  * \n and gives popup
  * @author - Katherine R
  */
@@ -399,22 +414,33 @@ void BudgetPage::createExpensesSubPage() {
     expenses_vbox->addWidget(expenses_totalExpensesLabel);
 
     //category part
+    expenses_categoryGroupBox = new QGroupBox(tr("Categories"));
+    expenses_categoryVbox = new QVBoxLayout; //creates category sub-area
     expenses_categoriesComboBox = new QComboBox();
-    expenses_categoryLineEdit = new QLineEdit();
+    expenses_categoryNameLineEdit = new QLineEdit();
     //creates a QLineEdit to add categories, add with enter
     //the categories are selectable w the combobox
     expenses_categoriesComboBox->addItem(tr("Default Category"));
-    expenses_categoryLineEdit->setPlaceholderText("Add Expense Category");
+    expenses_categoryNameLineEdit->setPlaceholderText("Add Expense Category");
+    //creates a category description text box
+    expenses_categoryDescriptionLineEdit = new QLineEdit();
+    expenses_categoryDescriptionLineEdit->setPlaceholderText(tr("Add Category Description"));
+    expenses_categoryLabel = new QLabel("Default Description");
+    expenses_categoryDescriptions.append(QString("Default Description"));
+    //adds a placeholder text to the vector holding category names
     //adds category when enter is pressed
-    connect(expenses_categoryLineEdit, &QLineEdit::returnPressed, this, &BudgetPage::addExpenseCategory);
+    connect(expenses_categoryNameLineEdit, &QLineEdit::returnPressed, this, &BudgetPage::addExpenseCategory);
+    connect(expenses_categoryDescriptionLineEdit, &QLineEdit::returnPressed, this, &BudgetPage::addExpenseCategory);
     //combobox swaps expenses with category
     connect(expenses_categoriesComboBox, &QComboBox::currentIndexChanged, this, &BudgetPage::changeExpenseCategory);
-    //adds to widget
-    expenses_vbox->addWidget(expenses_categoriesComboBox);
-    expenses_vbox->addWidget(expenses_categoryLineEdit);
+    //sets vbox as layout and adds the comobobox and line edits to it.
+    expenses_categoryGroupBox->setLayout(expenses_categoryVbox);
+    expenses_categoryVbox->addWidget(expenses_categoriesComboBox);
+    expenses_categoryVbox->addWidget(expenses_categoryLabel);
+    expenses_categoryVbox->addWidget(expenses_categoryNameLineEdit);
+    expenses_categoryVbox->addWidget(expenses_categoryDescriptionLineEdit);
+    expenses_vbox->addWidget(expenses_categoryGroupBox); //adds to the parent expenses widget
     expenses_categoriesComboBox_index = 0;
-
-    expenses_vbox->addWidget(expenses_addExpenseButton);
 
     // creates a scroll area for the list of expenses for every budgetpage, then hides and disables them
     for (BudgetPageBudget *budget: budgets) {
@@ -426,9 +452,10 @@ void BudgetPage::createExpensesSubPage() {
     budgets[budgetPeriodIndex]->getExpensescrollarea()->show();
     budgets[budgetPeriodIndex]->getExpensescrollarea()->setDisabled(false);
 
-    expenses_Group->setLayout(expenses_vbox);
     //connects the add button to newExpense
+    expenses_vbox->addWidget(expenses_addExpenseButton);
     connect(expenses_addExpenseButton, &QPushButton::clicked, this, &BudgetPage::newExpense);
+    expenses_Group->setLayout(expenses_vbox);
     budgetLayout->addWidget(expenses_Group);
 }
 
@@ -456,6 +483,10 @@ double BudgetPage::getSurplusGoal() {
     return this->budgetSelector_goalSpinBox->value();
 }
 
+/**
+     * @brief stter for user id
+     * @param userId qstring id
+     */
 void BudgetPage::setCurrentUserId(const QString &userId) {
     this->userId = QString(userId);
 }
@@ -469,16 +500,21 @@ void BudgetPage::setCurrentUserId(const QString &userId) {
 */
 void BudgetPage::addExpenseCategory() {
     //category
-    QString Category = expenses_categoryLineEdit->text(); //gets category text
-    if (!Category.isEmpty()) {
+    QString Category = expenses_categoryNameLineEdit->text(); //gets category text
+    QString CategoryDescription = expenses_categoryDescriptionLineEdit->text();
+    if (!Category.isEmpty() && !CategoryDescription.isEmpty()) {
         //if the text isn't empty
         if (expenses_categoriesComboBox->findText(Category) == -1) {
             //if the text isn't already a category
             expenses_categoriesComboBox->addItem(Category); //adds category
-            expenses_categoryLineEdit->clear(); //clears text on the line edit
+            expenses_categoryNameLineEdit->clear(); //clears text on the line edit
+            expenses_categoryDescriptions.append(QString(CategoryDescription));
+            expenses_categoryDescriptionLineEdit->clear();
             //creates a new vbox/scrollarea for every budget page's category's expenses, hides them
             for (BudgetPageBudget *budget: budgets) {
                 budget->newExpensescrollArea();
+                budget->setbudgetCategoryNames(Category);
+                budget->setBudgetCategoryDescriptions(CategoryDescription);
                 expenses_vbox->addWidget(budget->getExpensescrollarea(expenses_categoriesComboBox->count() - 1));
                 budget->getExpensescrollarea(expenses_categoriesComboBox->count() - 1)->hide();
                 budget->getExpensescrollarea(expenses_categoriesComboBox->count() - 1)->setDisabled(true);
@@ -487,13 +523,70 @@ void BudgetPage::addExpenseCategory() {
             budgets[budgetPeriodIndex]->getExpensescrollarea(expenses_categoriesComboBox->count() - 1)->show();
             budgets[budgetPeriodIndex]->getExpensescrollarea(expenses_categoriesComboBox->count() - 1)->
                     setDisabled(false);
-            //changes the category combobox selection to the new one
+
+            //changes the category combobox selection to the new one and the category description
             expenses_categoriesComboBox->setCurrentIndex(expenses_categoriesComboBox->count() - 1);
+            expenses_categoryLabel->setText(CategoryDescription);
         } else {
             //gives error if it's already a category
-            expenses_categoryLineEdit->setText("Error! category already exists");
-            // expenses_categoryLineEdit->setStyleSheet("background-color: red");
+            expenses_categoryNameLineEdit->setText("Error! category already exists");
+            QMessageBox::StandardButton warning = QMessageBox::warning(this, "warning",
+                                                                       "Error! category already exists",
+                                                                       QMessageBox::Ok);
+            // expenses_categoryNameLineEdit->setStyleSheet("background-color: red");
         }
+    } else {
+        QMessageBox::StandardButton warning = QMessageBox::critical(this, "warning", "Can't Create Empty Category!",
+                                                                    QMessageBox::Ok); //gives error popup
+    }
+}
+
+/**
+*@brief  creates a new expense category
+* \n Doesnt do anything if name/description is empty
+* \n shows text saying category already exists if duplicate entry is attempted
+* \n categories are shared with all budget configurations
+* \n creates an expense category UI for every budgetpagebudget
+ * @param name the category name
+ * @param description the category description
+ */
+void BudgetPage::newExpenseCategory(QString name, QString description) {
+    if (!name.isEmpty() && !description.isEmpty()) {
+        //if the text isn't empty
+        if (expenses_categoriesComboBox->findText(name) == -1) {
+            //if the text isn't already a category
+            expenses_categoriesComboBox->addItem(name); //adds category
+            expenses_categoryNameLineEdit->clear(); //clears text on the line edit
+            expenses_categoryDescriptions.append(QString(description));
+            expenses_categoryDescriptionLineEdit->clear();
+            //creates a new vbox/scrollarea for every budget page's category's expenses, hides them
+            for (BudgetPageBudget *budget: budgets) {
+                budget->newExpensescrollArea();
+                budget->setbudgetCategoryNames(name);
+                budget->setBudgetCategoryDescriptions(description);
+                expenses_vbox->addWidget(budget->getExpensescrollarea(expenses_categoriesComboBox->count() - 1));
+                budget->getExpensescrollarea(expenses_categoriesComboBox->count() - 1)->hide();
+                budget->getExpensescrollarea(expenses_categoriesComboBox->count() - 1)->setDisabled(true);
+            }
+            // //shows the selected category on the current budget page
+            // budgets[budgetPeriodIndex]->getExpensescrollarea(expenses_categoriesComboBox->count() - 1)->show();
+            // budgets[budgetPeriodIndex]->getExpensescrollarea(expenses_categoriesComboBox->count() - 1)->
+            //         setDisabled(false);
+
+            // //changes the category combobox selection to the new one and the category description
+            // expenses_categoriesComboBox->setCurrentIndex(expenses_categoriesComboBox->count() - 1);
+            // expenses_categoryLabel->setText(description);
+        } else {
+            //gives error if it's already a category
+            expenses_categoryNameLineEdit->setText("Error! category already exists");
+            QMessageBox::StandardButton warning = QMessageBox::warning(this, "warning",
+                                                                       "Error! category already exists",
+                                                                       QMessageBox::Ok);
+            // expenses_categoryNameLineEdit->setStyleSheet("background-color: red");
+        }
+    } else {
+        QMessageBox::StandardButton warning = QMessageBox::critical(this, "warning", "Can't Create Empty Category!",
+                                                                    QMessageBox::Ok); //gives error popup
     }
 }
 
@@ -503,6 +596,9 @@ void BudgetPage::addExpenseCategory() {
  * @param index category index
  */
 void BudgetPage::changeExpenseCategory(int index) {
+    expenses_categoryDescriptionLineEdit->clear(); //clears the text on the category text box
+    expenses_categoryLabel->setText(expenses_categoryDescriptions.at(index));
+    //loads the category text at the new index
     //hides prev selected category
     budgets[budgetPeriodIndex]->getExpensescrollarea(expenses_categoriesComboBox_index)->hide();
     budgets[budgetPeriodIndex]->getExpensescrollarea(expenses_categoriesComboBox_index)->setDisabled(true);
@@ -549,6 +645,7 @@ void BudgetPage::newExpense() {
     //adds a new expense object to the current budget page
     budgets[budgetPeriodIndex]->getExpenses()->append(new BudgetPageExpenses());
     BudgetPageExpenses *tempExpense = budgets[budgetPeriodIndex]->getExpenses()->last();
+    tempExpense->setCategoryindex(expenses_categoriesComboBox_index);
     onExpenseChangedSlot(tempExpense->getExpense());
     // connects signal to know when expense is changed
     connect(tempExpense, &BudgetPageExpenses::expenseChangedSignal, this, &BudgetPage::onExpenseChangedSlot);
@@ -653,10 +750,11 @@ void BudgetPage::updateBarGraph() {
     barChart_series->attachAxis(barChart_xAxis);
     barChart_goalLine->attachAxis(barChart_xAxis);
     barChart_yAxis = new QValueAxis;
-    barChart_yAxis->setLabelFormat("%5d");
+    // barChart_yAxis->setLabelFormat("%5d");
     barChart_chart->addAxis(barChart_yAxis, Qt::AlignLeft);
-    barChart_goalLine->attachAxis(barChart_yAxis);
     barChart_series->attachAxis(barChart_yAxis);
+    barChart_goalLine->attachAxis(barChart_yAxis);
+    barChart_yAxis->setRange(barChart_yAxis->min() - 3, barChart_yAxis->max() + 3);
     barChart_chart->legend()->setVisible(true);
     //creates chartview and adds to layout
     barChart_chartView = new QChartView(barChart_chart);
@@ -709,6 +807,7 @@ void BudgetPage::createBudgetsCSV() {
     int rangehigh;
     //sets the index to know which budgets to create csv files for
     if (budgetPeriodIndex == 0) {
+        //yearly
         rangelow = 0;
         rangehigh = 0;
     } else if (budgetPeriodIndex <= 4) {
@@ -716,11 +815,107 @@ void BudgetPage::createBudgetsCSV() {
         rangelow = 1;
         rangehigh = 4;
     } else {
+        //quarterly
         rangelow = 5;
         rangehigh = 16;
     }
     for (int i = rangelow; i <= rangehigh; ++i) {
         //goes through every budget and creates the csv for it
         budgets.at(i)->createBudgetPageCSV();
+    }
+}
+
+/**
+ * imports a csv budgetpage file
+ * @param filepath the file path of the csv
+ */
+void BudgetPage::importCSV() {
+    QString filepath = QFileDialog::getOpenFileName(this, "Select CSV File", "", "CSV Files (*.csv)");
+    if (!filepath.contains("csv")) {
+        qDebug() << "Importing Non-CSV file!";
+        QMessageBox::StandardButton warning = QMessageBox::critical(this, "warning", "can't import Non CSV file!",
+                                                                    QMessageBox::Ok);
+        return;
+    }
+    QFile file(filepath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+    QTextStream in(&file);
+    in.readLine(); //skips first line
+    QString valueRow = in.readLine(); //reads the 2nd line (the one w the var values)
+    QStringList valueList = valueRow.split(','); //splits the line by commas to each value
+    if (valueList.size() == 6) {
+        //if the csv line is the expected format
+        //gets the values from the csv file
+        double budget = valueList.at(0).toDouble();
+        double totalExpenses = valueList.at(1).toDouble();
+        double remainingBudget = valueList.at(2).toDouble();
+        double budgetGoal = valueList.at(3).toDouble();
+        int budgetIndex = valueList.at(4).toInt();
+        if (budgetIndex <= 17 && budgetIndex >= 0) {
+            //sets variables to new ones
+            budgets[budgetIndex]->setBudget(budget);
+            budgets[budgetIndex]->setTotalExpenses(totalExpenses);
+            budgets[budgetIndex]->setRemainingBudget(remainingBudget);
+            budgets[budgetIndex]->setBudgetGoal(budgetGoal);
+            //if the current selected budgetpage is the one imported - changes the variables
+            if (budgetPeriodIndex == budgetIndex) {
+                budgetSelector_SpinBox->setValue(budget);
+                budgetSelector_goalSpinBox->setValue(budgetGoal);
+            }
+
+            //reads category names and desc, creates categories for them
+            QString line = in.readLine();
+            QStringList categoryList = line.split(',');
+            for (QString category: categoryList) {
+                if (!category.isNull() || !category.isEmpty()) {
+                    QStringList temp = category.split('_');
+                    if (!temp.isEmpty() && temp.size() == 2) {
+                        newExpenseCategory(temp.at(0), temp.at(1));
+                    }
+                }
+            }
+
+            budgets[budgetIndex]->getExpenses()->clear(); //removes prev expenses
+            in.readLine(); //skips the line explaining expenses
+            int oldIndex = budgetPeriodIndex; //saves the old index
+            int oldExpenseCategoryIndex = expenses_categoriesComboBox_index; //saves the old index
+            while (!in.atEnd()) {
+                QString line = in.readLine(); //reads a line, then splits it by commas
+                QStringList valueList = line.split(',');
+                if (valueList.size() == 5) {
+                    //if the csv follows the expected format
+                    if (valueList.at(4).toInt() < budgets.at(budgetIndex)->getCategoriesCount()) {
+                        //gets the category index
+                        //if the category exists - adds it to the existing category
+                        budgetPeriodIndex = budgetIndex;
+                        changeBudgetPage();
+                        changeExpenseCategory(valueList.at(4).toInt());
+                        newExpense();
+                    } else {
+                        qDebug() << "error! expense category exceeds total category count!";
+                        // //if the category doesn't exist-adds it to a new category
+                        // while (valueList.at(4).toInt() > budgets.at(budgetIndex)->getCategoriesCount()) {
+                        //     addExpenseCategory();
+                        // }
+                        // newExpense();
+                    }
+                    budgets[budgetIndex]->getExpenses()->last()->setExpenseName(QString(valueList.at(0)));
+                    budgets[budgetIndex]->getExpenses()->last()->setExpenseDescription(QString(valueList.at(1)));
+                    budgets[budgetIndex]->getExpenses()->last()->setExpenseQuantity(valueList.at(2).toDouble());
+                    budgets[budgetIndex]->getExpenses()->last()->setExpensePrice(valueList.at(3).toDouble());
+                    budgets[budgetIndex]->getExpenses()->last()->setCategoryindex(valueList.at(4).toInt());
+                }
+            }
+            budgetPeriodIndex = oldIndex;
+            changeBudgetPage();
+            changeExpenseCategory(oldExpenseCategoryIndex);
+        }
+    } else {
+        //if the csv file isn't expected format
+        qDebug() << "improper csv format";
+        QMessageBox::StandardButton warning = QMessageBox::critical(this, "warning", "improper csv format!",
+                                                                    QMessageBox::Ok);
+        return;
     }
 }

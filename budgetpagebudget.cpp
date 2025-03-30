@@ -18,6 +18,8 @@ BudgetPageBudget::BudgetPageBudget(QObject *parent)
     this->remainingBudget = 0;
     this->budgetIndex = 0;
     this->budgetGoal = 0;
+    this->budgetCategoryNames=new QStringList("Default Category");
+    this->budgetCategoryDescriptions=new QStringList("Default Description");
     //creates area for expenses
     newExpensescrollArea();
 }
@@ -36,6 +38,8 @@ BudgetPageBudget::BudgetPageBudget(QObject *parent, int budgetindex)
     this->remainingBudget = 0;
     this->budgetIndex = budgetindex;
     this->budgetGoal = 0;
+    this->budgetCategoryNames=new QStringList("Default Category");
+    this->budgetCategoryDescriptions=new QStringList("Default Description");
     newExpensescrollArea();
 }
 
@@ -56,7 +60,8 @@ BudgetPageBudget::BudgetPageBudget(QObject *parent, double budget, double totale
     this->remainingBudget = remainingbudget;
     this->budgetIndex = budgetindex;
     this->budgetGoal = goal;
-
+    this->budgetCategoryNames=new QStringList("Default Category");
+    this->budgetCategoryDescriptions=new QStringList("Default Description");
     newExpensescrollArea();
 }
 
@@ -75,6 +80,8 @@ BudgetPageBudget::BudgetPageBudget(QObject *parent, const QJsonObject &json) : Q
         this->remainingBudget = json.value("Remaining Budget").toDouble();
         this->budgetIndex = json.value("Index").toInt();
         this->budgetGoal = json.value("Goal").toDouble();
+        this->budgetCategoryNames=new QStringList("Default Category");
+        this->budgetCategoryDescriptions=new QStringList("Default Description");
         //splits Expenses into JSON array, then adds them
         QJsonArray expensesArray = json.value("Expenses").toArray();
         for (QJsonValue expense: expensesArray) {
@@ -284,6 +291,13 @@ void BudgetPageBudget::newExpensescrollArea() {
 }
 
 /**
+ * @brief returns the number of category vboxes in the budgetpage qvector
+ * @return the count
+ */
+int BudgetPageBudget::getCategoriesCount() {
+    return budgetObj_expenseScrollListVbox.count();
+}
+/**
  * @brief creates an expense csv file
  * \n creates a CSV file with the name defined by macro EXPENSE_CSV_NAME_Budget period
   * \n default would be budgeted_Q1 for Q1
@@ -314,6 +328,10 @@ void BudgetPageBudget::createBudgetPageCSV() {
     //adds the variables to the second line
     stream << this->budget << "," << this->totalExpenses << "," << this->remainingBudget << ",";
     stream << this->budgetGoal << "," << this->budgetIndex << "," << getBudgetPeriodString() << "\n";
+    for (int i = 0; i < budgetCategoryNames->count(); i++) {
+        stream<<budgetCategoryNames->at(i)<<"_"<<budgetCategoryDescriptions->at(i)<<",";
+    }
+    stream<<"\n";
     //adds a line explaining expense vars
     stream << "expense name, expense description, expense quantity, expense price, expense category index\n";
     if (expenses.count() > 0) {
@@ -375,4 +393,19 @@ QString BudgetPageBudget::getBudgetPeriodString() {
         default:
             return "Unknown";
     }
+}
+
+/**
+ * setter for budget category name
+ * @param newName new name to add
+ */
+void BudgetPageBudget::setbudgetCategoryNames(QString newName) {
+    this->budgetCategoryNames->append(newName);
+}
+/**
+ * setter for budget category desc
+ * @param newName new name to add
+ */
+void BudgetPageBudget::setBudgetCategoryDescriptions(QString newDescription) {
+    this->budgetCategoryDescriptions->append(newDescription);
 }

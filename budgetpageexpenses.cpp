@@ -261,6 +261,46 @@ QString BudgetPageExpenses::to_CSV() {
 }
 
 /**
+ * @brief setter for name
+ * @param name
+ */
+void BudgetPageExpenses::setExpenseName(QString name) {
+    this->expenseName=new QString(name);
+    expenseObj_NameLineEdit->setText(*this->expenseName);
+}
+/**
+ * @brief setter for description
+ * @param description
+ */
+void BudgetPageExpenses::setExpenseDescription(QString description) {
+    this->expenseDescription=new QString(description);
+    expenseObj_DescriptionLineEdit->setText(*this->expenseDescription);
+}
+/**
+ * @brief setter for price
+ * @param price the price
+ */
+void BudgetPageExpenses::setExpensePrice(double price) {
+    this->price=price;
+    this->expenseObj_PriceSpinBox->setValue(this->price);
+}
+/**
+ * @brief setter for quantity
+ * @param quantity the quantity
+ */
+void BudgetPageExpenses::setExpenseQuantity(double quantity) {
+    this->quantity=quantity;
+    this->expenseObj_QuantitySpinBox->setValue(this->quantity);
+}
+/**
+    * @brief setter for categoryindex
+    * @param categoryindex the category index
+    */
+void BudgetPageExpenses::setCategoryindex(int categoryindex) {
+     this->categoryIndex= categoryindex;
+}
+
+/**
  *@brief creates the UI objects for BudgetPageExpenses
  *used to eliminate repeated code on constructor
  *
