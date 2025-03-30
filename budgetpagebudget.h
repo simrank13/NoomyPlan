@@ -28,7 +28,7 @@ public:
      * @param parent parent qobject
       * @author Katherine R
      */
-    explicit BudgetPageBudget(QObject *parent = nullptr);
+    explicit BudgetPageBudget(QObject * parent = nullptr);
 
     /**
      * @brief semi parametrized constructor, everything set to 0, except index
@@ -37,7 +37,7 @@ public:
      * @param budgetindex the index (0 = year, 1-5 = Q1-Q4, 6-18 = jan-dec) for to_JSON
       * @author Katherine R
      */
-    BudgetPageBudget(QObject *parent, int budgetindex);
+    BudgetPageBudget(QObject * parent, int budgetindex);
 
     /**
     * @brief parametrized constructor
@@ -48,8 +48,8 @@ public:
     * @param goal budget goal
     * @param budgetindex the index for the period of the budget (0=yearly, 1-5=quarterly, 6-18=monthly)
     */
-    BudgetPageBudget(QObject *parent, double budget, double totalexpense, double remainingbudget, int budgetindex,
-                     double goal);
+    BudgetPageBudget(QObject * parent, double budget, double totalexpense, double remainingbudget, int budgetindex,
+                     double    goal);
 
     /**
     * @brief parametrized constructor - creates a budget object from QJSONobject
@@ -59,7 +59,7 @@ public:
      @copydoc BudgetPageBudget::to_JSON()
       * @author Katherine R
      */
-    BudgetPageBudget(QObject *parent, const QJsonObject &json);
+    BudgetPageBudget(QObject * parent, const QJsonObject &json);
 
     /**
      * @brief getter for budget
@@ -87,7 +87,7 @@ public:
      * @return expenses qvector
       * @author Katherine R
      */
-    QVector<BudgetPageExpenses *> *getExpenses();
+    QVector<BudgetPageExpenses *> * getExpenses();
 
     /**
      * @brief setter for budget
@@ -144,28 +144,28 @@ public:
     @author Katherine R
     @return the expenses widget
     */
-    QWidget *getExpensescrollwidget();
+    QWidget * getExpensescrollwidget();
 
     /**
     *@Brief getter for expenses scroll area
     @author Katherine R
     @return the expenses Qscrollarea for scroll area
     */
-    QScrollArea *getExpensescrollarea();
+    QScrollArea * getExpensescrollarea();
 
     /**@Brief getter for expenses scroll area at index
    *@param index - the index
    @author Katherine R
    @return the expenses scroll area
    */
-    QScrollArea *getExpensescrollarea(int index);
+    QScrollArea * getExpensescrollarea(int index);
 
     /**
     *@Brief getter for expenses vbox
     @author Katherine R
     @return the expenses vbox
     */
-    QVBoxLayout *getExpensesscrolllistvbox();
+    QVBoxLayout * getExpensesscrolllistvbox();
 
     /**
     *@Brief getter for expenses vbox at index
@@ -173,7 +173,7 @@ public:
     @author Katherine R
     @return the expenses vbox
     */
-    QVBoxLayout *getExpensesscrolllistvbox(int index);
+    QVBoxLayout * getExpensesscrolllistvbox(int index);
 
     /**
       *@Brief getter for budget goal
@@ -201,16 +201,17 @@ public:
     int getCategoriesCount();
 
     /**
-    * @brief creates an expense csv file
-    * \n creates a CSV file with the name defined by macro EXPENSE_CSV_NAME_Budget period
-     * \n default would be budgeted_Q1 for Q1
-    * \n csv has variable definition on first line
-    * \n budget,total expenses, remaining budget, budget goal, budget index, budget period
-    * \n then the actual vars on the second
-    * \n then has definition on 3rd line
-    * \n expense name, expense description, expense quantity, expense price, expense category index
-    * \n followed by any expenses
-    */
+     * @brief creates an expense csv file
+     * \n creates a CSV file with the name defined by macro EXPENSE_CSV_NAME_Budget period
+      * \n default would be budgeted_Q1 for Q1
+     * \n csv has variable definition on first line
+     * \n budget,total expenses, remaining budget, budget goal, budget index, budget period
+     * \n then the actual vars on the second
+     * \n on the 3rd line - contains expense category names and descriptions as "name"_"description"
+     * \n then defines expense variables  on 4th line
+     * \n expense name, expense description, expense quantity, expense price, expense category index
+     * \n followed by any expenses and their variables
+     */
     void createBudgetPageCSV();
 
     /**
@@ -220,8 +221,17 @@ public:
      */
     QString getBudgetPeriodString();
 
- void setbudgetCategoryNames(QString newName);
- void setBudgetCategoryDescriptions(QString newDescription);
+    /**
+     * setter for budget category name
+     * @param newName new name to add
+     */
+    void setbudgetCategoryNames(QString newName);
+
+    /**
+    * setter for budget category desc
+    * @param newName new name to add
+    */
+    void setBudgetCategoryDescriptions(QString newDescription);
 
 private:
     QVector<BudgetPageExpenses *> expenses; //stores expense items
@@ -230,8 +240,8 @@ private:
     double remainingBudget;
     int budgetIndex; // index 0 = yearly 1-5 = Q1-Q4, 6-18 = jan-dec
     double budgetGoal;
-    QStringList *budgetCategoryNames;
-    QStringList *budgetCategoryDescriptions;
+    QStringList * budgetCategoryNames; //stores the names of budget categories, used for export
+    QStringList * budgetCategoryDescriptions; //stores the description of budget categories, used for export
     QVector<QWidget *> budgetObj_expenseScrollWidget; //vector storing a qwidget per expense category
     QVector<QScrollArea *> budgetObj_expenseScrollArea; //vector storing qscrollarea per expense category
     QVector<QVBoxLayout *> budgetObj_expenseScrollListVbox; //vector storing a vbox per expense category

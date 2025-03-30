@@ -44,7 +44,7 @@ BudgetPageBudget::BudgetPageBudget(QObject *parent, int budgetindex)
 }
 
 /**
- * @brief parametrized constructor 
+ * @brief parametrized constructor
  * @param parent parent qobject
  * @param budget budget
  * @param totalexpense total expenses
@@ -206,7 +206,7 @@ QJsonObject BudgetPageBudget::to_JSON() {
 }
 
 /**
-*@Brief getter for scrollwidget 
+*@Brief getter for scrollwidget
 @author Katherine R
 @return the expenses area widget
 */
@@ -215,7 +215,7 @@ QWidget *BudgetPageBudget::getExpensescrollwidget() {
 }
 
 /**
-*@Brief getter for expenses scroll area 
+*@Brief getter for expenses scroll area
 @author Katherine R
 @return the expenses Qscrollarea for scroll area
 */
@@ -237,7 +237,7 @@ QScrollArea *BudgetPageBudget::getExpensescrollarea(int index) {
 }
 
 /**
-*@Brief getter for expenses vbox 
+*@Brief getter for expenses vbox
 @author Katherine R
 @return the expenses vbox
 */
@@ -297,6 +297,7 @@ void BudgetPageBudget::newExpensescrollArea() {
 int BudgetPageBudget::getCategoriesCount() {
     return budgetObj_expenseScrollListVbox.count();
 }
+
 /**
  * @brief creates an expense csv file
  * \n creates a CSV file with the name defined by macro EXPENSE_CSV_NAME_Budget period
@@ -304,9 +305,10 @@ int BudgetPageBudget::getCategoriesCount() {
  * \n csv has variable definition on first line
  * \n budget,total expenses, remaining budget, budget goal, budget index, budget period
  * \n then the actual vars on the second
- * \n then has definition on 3rd line
+ * \n on the 3rd line - contains expense category names and descriptions as "name"_"description"
+ * \n then defines expense variables  on 4th line
  * \n expense name, expense description, expense quantity, expense price, expense category index
- * \n followed by any expenses
+ * \n followed by any expenses and their variables
  */
 void BudgetPageBudget::createBudgetPageCSV() {
     //checks if there;s no expenses to output
@@ -328,6 +330,7 @@ void BudgetPageBudget::createBudgetPageCSV() {
     //adds the variables to the second line
     stream << this->budget << "," << this->totalExpenses << "," << this->remainingBudget << ",";
     stream << this->budgetGoal << "," << this->budgetIndex << "," << getBudgetPeriodString() << "\n";
+    //adds category names and descriptions
     for (int i = 0; i < budgetCategoryNames->count(); i++) {
         stream<<budgetCategoryNames->at(i)<<"_"<<budgetCategoryDescriptions->at(i)<<",";
     }
@@ -351,8 +354,8 @@ void BudgetPageBudget::createBudgetPageCSV() {
 
 /**
  * @brief gives a QString with the text of the budgetpagebudget's set budget index
- * \n according to budgetIndex - 0 - yearly (1-4)= Q1-Q4 5-16 = jan-dec
- * @return
+ * \n according to budgetIndex - 0 - yearly (1-4)= Q1-Q4 (5-16) = jan-dec
+ * @return the qstring w the type of budget period
  */
 QString BudgetPageBudget::getBudgetPeriodString() {
     switch (budgetIndex) {

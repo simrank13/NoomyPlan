@@ -32,7 +32,7 @@
 * \n it uses BudgetPageBudget to store the budgets for different time periods (Quarters, months, and a yearly one)
 * \n relies on BudgetPageBudget and budgetpage expenses
 * @copydoc BudgetPageBudget
-* @copycoc
+* @copycoc BudgetPageExpenses
 */
 class BudgetPage : public QMainWindow {
     Q_OBJECT
@@ -44,7 +44,7 @@ public:
      * @param parent qwidget
      * @author - Katherine R
      */
-    explicit BudgetPage(QWidget *parent = nullptr);
+    explicit BudgetPage(QWidget * parent = nullptr);
 
     /**
      * @brief destructor for budgetpage
@@ -177,7 +177,7 @@ private slots:
      * @param toDelete expense item to delete
       * @author - Katherine R
      */
-    void deleteExpense(BudgetPageExpenses *toDelete);
+    void deleteExpense(BudgetPageExpenses * toDelete);
 
     /**
    * @brief "updates" the bar graph
@@ -216,67 +216,76 @@ private slots:
      */
     void createBudgetsCSV();
 
+    /**
+     * imports a csv budgetpage file
+     * \n imports a single file
+     * \n file has to follow the same format as the export
+     * \n the imported budget replaces any variables or expenses that were saved
+     * @copydoc BudgetPageBudget::createBudgetPageCSV
+     * @param filepath the file path of the csv
+     */
     void importCSV();
 
 private:
     // Budget period selector
-    QGroupBox *budgetPeriod_GroupBox;
-    QLabel *budgetPeriod_Label;
-    QComboBox *budgetPeriod_TypeComboBox;
-    QVBoxLayout *budgetPeriod_Vbox;
-    QComboBox *budgetPeriod_QuarterlyComboBox;
-    QComboBox *budgetPeriod_MonthlyComboBox;
+    QGroupBox *   budgetPeriod_GroupBox;
+    QLabel *      budgetPeriod_Label;
+    QComboBox *   budgetPeriod_TypeComboBox;
+    QVBoxLayout * budgetPeriod_Vbox;
+    QComboBox *   budgetPeriod_QuarterlyComboBox;
+    QComboBox *   budgetPeriod_MonthlyComboBox;
 
     // Budget selector
-    QGroupBox *budgetSelector_group;
-    QLabel *budgetSelector_Label;
-    QDoubleSpinBox *budgetSelector_SpinBox;
-    QVBoxLayout *budgetSelector_VBox;
+    QGroupBox *                 budgetSelector_group;
+    QLabel *                    budgetSelector_Label;
+    QDoubleSpinBox *            budgetSelector_SpinBox;
+    QVBoxLayout *               budgetSelector_VBox;
     QVector<BudgetPageBudget *> budgets;
-    int budgetPeriodIndex;
-    QObject *budgetsObject;
-    QLabel *budgetSelector_GoalLabel;
-    QDoubleSpinBox *budgetSelector_goalSpinBox;
+    int                         budgetPeriodIndex;
+    QObject *                   budgetsObject;
+    QLabel *                    budgetSelector_GoalLabel;
+    QDoubleSpinBox *            budgetSelector_goalSpinBox;
 
     // Expenses subpage
-    QGroupBox *expenses_Group;
-    QVBoxLayout *expenses_vbox;
-    QPushButton *expenses_addExpenseButton;
-    QLabel *expenses_remainingBudgetLabel;
-    QLabel *expenses_totalExpensesLabel;
-    QComboBox *expenses_categoriesComboBox;
-    QLineEdit *expenses_categoryNameLineEdit;
-    int expenses_categoriesComboBox_index;
-    bool showExpenseExceedPopup;
-    QLineEdit *expenses_categoryDescriptionLineEdit;
+    QGroupBox *      expenses_Group;
+    QVBoxLayout *    expenses_vbox;
+    QPushButton *    expenses_addExpenseButton;
+    QLabel *         expenses_remainingBudgetLabel;
+    QLabel *         expenses_totalExpensesLabel;
+    QComboBox *      expenses_categoriesComboBox;
+    QLineEdit *      expenses_categoryNameLineEdit;
+    int              expenses_categoriesComboBox_index;
+    bool             showExpenseExceedPopup;
+    QLineEdit *      expenses_categoryDescriptionLineEdit;
     QVector<QString> expenses_categoryDescriptions;
-    QLabel *expenses_categoryLabel;
-    QGroupBox *expenses_categoryGroupBox;
-    QVBoxLayout *expenses_categoryVbox;
+    QLabel *         expenses_categoryLabel;
+    QGroupBox *      expenses_categoryGroupBox;
+    QVBoxLayout *    expenses_categoryVbox;
 
     // Bar graph
-    QWidget *barChart_Widget;
-    QHBoxLayout *barChart_GroupVbox;
-    QBarSet *barChart_Value;
-    QBarSet *barChart_Neg;
-    QBarCategoryAxis *barChart_xAxis;
-    QStackedBarSeries *barChart_series;
-    QChart *barChart_chart;
-    QValueAxis *barChart_yAxis;
-    QChartView *barChart_chartView;
-    QPushButton *barGraph_updateButton;
-    QStringList *barChart_categories_Quarterly;
-    QStringList *barChart_categories_Monthly;
-    QLineSeries *barChart_goalLine;
+    QWidget *           barChart_Widget;
+    QHBoxLayout *       barChart_GroupVbox;
+    QBarSet *           barChart_Value;
+    QBarSet *           barChart_Neg;
+    QBarCategoryAxis *  barChart_xAxis;
+    QStackedBarSeries * barChart_series;
+    QChart *            barChart_chart;
+    QValueAxis *        barChart_yAxis;
+    QChartView *        barChart_chartView;
+    QPushButton *       barGraph_updateButton;
+    QStringList *       barChart_categories_Quarterly;
+    QStringList *       barChart_categories_Monthly;
+    QLineSeries *       barChart_goalLine;
 
 
-    QWidget *centralWidget;
-    QGridLayout *budgetLayout;
-    QString userId;
-    QPushButton *createCSVbutton;
-    QPushButton *importButton;
-    QVBoxLayout *budgetButtonVbox;
-    QGroupBox *budgetButtonGroupBox;
+    QWidget *     centralWidget;
+    QGridLayout * budgetLayout;
+    QString       userId;
+    QPushButton * createCSVbutton;
+    QPushButton * importButton;
+    QVBoxLayout * budgetButtonVbox;
+    QGroupBox *   budgetButtonGroupBox;
+
 
     /**
       * @brief calculates the remaining budget for budgets[budgetPeriodIndex]

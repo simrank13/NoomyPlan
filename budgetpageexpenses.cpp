@@ -6,14 +6,14 @@
     * @param parent parent QObject if needed
      * @author Katherine R
     */
-BudgetPageExpenses::BudgetPageExpenses(QObject *parent)
-    : QObject{parent} {
-    this->expenseName = new QString("");
-    this->expenseDescription = new QString("");
-    this->quantity = 1;
-    this->price = 1;
-    this->categoryIndex = 0;
-    createUIobjects();
+BudgetPageExpenses::BudgetPageExpenses(QObject * parent)
+    : QObject { parent } {
+    this->expenseName        = new QString( "" );
+    this->expenseDescription = new QString( "" );
+    this->quantity           = 1;
+    this->price              = 1;
+    this->categoryIndex      = 0;
+    createUIobjects( );
 }
 
 
@@ -27,16 +27,16 @@ BudgetPageExpenses::BudgetPageExpenses(QObject *parent)
  * @param categoryIndex the index of category
   * @author Katherine R
  */
-BudgetPageExpenses::BudgetPageExpenses(QObject *parent, const QString &name, const QString &description, double price,
-                                       double quantity, int categoryIndex
-): QObject{parent} {
-    expenseName = new QString(name);
-    expenseDescription = new QString(description);
-    this->price = price;
-    this->quantity = quantity;
+BudgetPageExpenses::BudgetPageExpenses(QObject * parent, const QString &name, const QString &description, double price,
+                                       double    quantity, int          categoryIndex
+        ): QObject { parent } {
+    expenseName         = new QString( name );
+    expenseDescription  = new QString( description );
+    this->price         = price;
+    this->quantity      = quantity;
     this->categoryIndex = categoryIndex;
 
-    createUIobjects();
+    createUIobjects( );
 }
 
 /**
@@ -49,16 +49,16 @@ BudgetPageExpenses::BudgetPageExpenses(QObject *parent, const QString &name, con
      *         \n "Quantity" - quantity of items
      *         \n "Category Index" - the index for categorization
      */
-BudgetPageExpenses::BudgetPageExpenses(QObject *parent, const QJsonObject &Expense): QObject{parent} {
-    if (!Expense.isEmpty()) {
-        expenseName = new QString(Expense.value("name").toString());
-        expenseDescription = new QString(Expense.value("description").toString());
-        price = Expense.value("price").toDouble();
-        quantity = Expense.value("quantity").toDouble();
-        categoryIndex = Expense.value("Category Index").toInt();
-        createUIobjects();
+BudgetPageExpenses::BudgetPageExpenses(QObject * parent, const QJsonObject &Expense): QObject { parent } {
+    if ( !Expense.isEmpty( ) ) {
+        expenseName        = new QString( Expense.value( "name" ).toString( ) );
+        expenseDescription = new QString( Expense.value( "description" ).toString( ) );
+        price              = Expense.value( "price" ).toDouble( );
+        quantity           = Expense.value( "quantity" ).toDouble( );
+        categoryIndex      = Expense.value( "Category Index" ).toInt( );
+        createUIobjects( );
     } else {
-        qDebug() << "empty JSON import-expense";
+        qDebug( ) << "empty JSON import-expense";
     }
 }
 
@@ -73,19 +73,19 @@ BudgetPageExpenses::BudgetPageExpenses(QObject *parent, const QJsonObject &Expen
 QJsonObject BudgetPageExpenses::to_JSON() {
     QJsonObject expenseJson;
     //inserts expense item values to json
-    if (!expenseName->isEmpty()) {
-        expenseJson.insert("Name", *expenseName);
+    if ( !expenseName->isEmpty( ) ) {
+        expenseJson.insert( "Name" , * expenseName );
     } else {
-        expenseJson.insert("Name", "\0");
+        expenseJson.insert( "Name" , "\0" );
     }
-    if (!expenseDescription->isEmpty()) {
-        expenseJson.insert("Description", *expenseDescription);
+    if ( !expenseDescription->isEmpty( ) ) {
+        expenseJson.insert( "Description" , * expenseDescription );
     } else {
-        expenseJson.insert("Description", "\0");
+        expenseJson.insert( "Description" , "\0" );
     }
-    expenseJson.insert("Price", QString::number(price));
-    expenseJson.insert("Quantity", quantity);
-    expenseJson.insert("Category Index", categoryIndex);
+    expenseJson.insert( "Price" , QString::number( price ) );
+    expenseJson.insert( "Quantity" , quantity );
+    expenseJson.insert( "Category Index" , categoryIndex );
     return expenseJson;
 }
 
@@ -95,7 +95,7 @@ QJsonObject BudgetPageExpenses::to_JSON() {
  * @return the remove button QPushButton
   * @author Katherine R
  */
-QPushButton *BudgetPageExpenses::getRemoveButton() {
+QPushButton * BudgetPageExpenses::getRemoveButton() {
     return expenseObj_removeExpenseButton;
 }
 
@@ -105,7 +105,7 @@ QPushButton *BudgetPageExpenses::getRemoveButton() {
       * @author Katherine R
      */
 double BudgetPageExpenses::getExpense() const {
-    if (quantity <= 0 || price < 0) {
+    if ( quantity <= 0 || price < 0 ) {
         return 0;
     }
     return this->price * this->quantity;
@@ -117,9 +117,9 @@ double BudgetPageExpenses::getExpense() const {
      * @author Katherine R
     */
 void BudgetPageExpenses::onExpenseNameChangedSlot(const QString &newName) const {
-    *expenseName = newName;
-    if (SHOW_DEBUG_LOGS) {
-        qDebug() << "New Expense Name - " << *this->expenseName;
+    * expenseName = newName;
+    if ( SHOW_DEBUG_LOGS ) {
+        qDebug( ) << "New Expense Name - " << * this->expenseName;
     }
 }
 
@@ -129,9 +129,9 @@ void BudgetPageExpenses::onExpenseNameChangedSlot(const QString &newName) const 
    @author Katherine R
    */
 void BudgetPageExpenses::onExpenseDescriptionChangedSlot(const QString &newDescription) const {
-    *expenseDescription = newDescription;
-    if (SHOW_DEBUG_LOGS) {
-        qDebug() << *this->expenseName << " - New Expense Description - " << *this->expenseDescription;
+    * expenseDescription = newDescription;
+    if ( SHOW_DEBUG_LOGS ) {
+        qDebug( ) << * this->expenseName << " - New Expense Description - " << * this->expenseDescription;
     }
 }
 
@@ -144,7 +144,7 @@ void BudgetPageExpenses::onExpenseDescriptionChangedSlot(const QString &newDescr
 void BudgetPageExpenses::expenseSBChangedSlot(double change, char changedType) {
     double oldExpenses = this->quantity * this->price;
     //determines the type that was changed (price or quantity)
-    switch (changedType) {
+    switch ( changedType ) {
         case 'Q': //if quantity
             this->quantity = change;
             break;
@@ -155,12 +155,12 @@ void BudgetPageExpenses::expenseSBChangedSlot(double change, char changedType) {
             break;
     }
 
-    if (SHOW_DEBUG_LOGS) {
-        qDebug() << "Expense " << *this->expenseName << " changed by - " << (this->quantity * this->price) -
+    if ( SHOW_DEBUG_LOGS ) {
+        qDebug( ) << "Expense " << * this->expenseName << " changed by - " << ( this->quantity * this->price ) -
                 oldExpenses;
     }
 
-    emit expenseChangedSignal((this->quantity * this->price) - oldExpenses);
+    emit expenseChangedSignal( ( this->quantity * this->price ) - oldExpenses );
 }
 
 /**
@@ -173,48 +173,50 @@ void BudgetPageExpenses::expenseSBChangedSlot(double change, char changedType) {
      * @param vbox VBox to add the UI to
       * @author Katherine R
      */
-void BudgetPageExpenses::createExpenseUI(QVBoxLayout *vbox) {
+void BudgetPageExpenses::createExpenseUI(QVBoxLayout * vbox) {
     //creates a line edit for name and description
-    expenseObj_NameLineEdit->setPlaceholderText(tr("Name"));
-    expenseObj_DescriptionLineEdit->setPlaceholderText(tr("Description"));
+    expenseObj_NameLineEdit->setPlaceholderText( tr( "Name" ) );
+    expenseObj_DescriptionLineEdit->setPlaceholderText( tr( "Description" ) );
 
     //creates a spinbox for price and quantity
-    expenseObj_QuantitySpinBox->setRange(1, 999); //configures spinbox
-    expenseObj_PriceSpinBox->setPrefix(tr("$\t"));
-    expenseObj_PriceSpinBox->setMaximum(100000000);
-    expenseObj_PriceSpinBox->setDecimals(2);
-    expenseObj_QuantitySpinBox->setDecimals(0);
+    expenseObj_QuantitySpinBox->setRange( 1 , 999 ); //configures spinbox
+    expenseObj_PriceSpinBox->setPrefix( tr( "$\t" ) );
+    expenseObj_PriceSpinBox->setMaximum( 100000000 );
+    expenseObj_PriceSpinBox->setDecimals( 2 );
+    expenseObj_QuantitySpinBox->setDecimals( 0 );
 
     //adds them to a form
-    expenseObj_addExpenseForm->addRow(tr("Quantity:"), expenseObj_QuantitySpinBox);
-    expenseObj_addExpenseForm->addRow(tr("Name:"), expenseObj_NameLineEdit); //adds the name,desc,price,qty to the form
-    expenseObj_addExpenseForm->addRow(tr("Description:"), expenseObj_DescriptionLineEdit);
-    expenseObj_addExpenseForm->addRow(tr("Price:"), expenseObj_PriceSpinBox);
+    expenseObj_addExpenseForm->addRow( tr( "Quantity:" ) , expenseObj_QuantitySpinBox );
+    expenseObj_addExpenseForm->addRow( tr( "Name:" ) , expenseObj_NameLineEdit );
+    //adds the name,desc,price,qty to the form
+    expenseObj_addExpenseForm->addRow( tr( "Description:" ) , expenseObj_DescriptionLineEdit );
+    expenseObj_addExpenseForm->addRow( tr( "Price:" ) , expenseObj_PriceSpinBox );
 
     //sets text and value for name, desc, quantity, price to the values from the object
-    expenseObj_NameLineEdit->setText(*this->expenseName);
-    expenseObj_DescriptionLineEdit->setText(*this->expenseDescription);
-    expenseObj_QuantitySpinBox->setValue(this->quantity);
-    expenseObj_PriceSpinBox->setValue(this->price);
+    expenseObj_NameLineEdit->setText( * this->expenseName );
+    expenseObj_DescriptionLineEdit->setText( * this->expenseDescription );
+    expenseObj_QuantitySpinBox->setValue( this->quantity );
+    expenseObj_PriceSpinBox->setValue( this->price );
 
     //connects spin boxes to the expenseChanged slot - with a char to denote if it's the quantity or price
-    connect(expenseObj_QuantitySpinBox, &QDoubleSpinBox::valueChanged, this,
-            [this](double value) { expenseSBChangedSlot(value, 'Q'); });
-    connect(expenseObj_PriceSpinBox, &QDoubleSpinBox::valueChanged, this,
-            [this](double value) { expenseSBChangedSlot(value, 'P'); });
+    connect( expenseObj_QuantitySpinBox , & QDoubleSpinBox::valueChanged , this ,
+             [this](double value) { expenseSBChangedSlot( value , 'Q' ); } );
+    connect( expenseObj_PriceSpinBox , & QDoubleSpinBox::valueChanged , this ,
+             [this](double value) { expenseSBChangedSlot( value , 'P' ); } );
 
     //connects name and description to set expenseName and expenseDescription
-    connect(expenseObj_NameLineEdit, &QLineEdit::textChanged, this, &BudgetPageExpenses::onExpenseNameChangedSlot);
-    connect(expenseObj_DescriptionLineEdit, &QLineEdit::textChanged, this,
-            &BudgetPageExpenses::onExpenseDescriptionChangedSlot);
+    connect( expenseObj_NameLineEdit , & QLineEdit::textChanged , this ,
+             & BudgetPageExpenses::onExpenseNameChangedSlot );
+    connect( expenseObj_DescriptionLineEdit , & QLineEdit::textChanged , this ,
+             & BudgetPageExpenses::onExpenseDescriptionChangedSlot );
 
     //adds the remove button to the widget
-    expenseObj_removeExpenseHbox->addWidget(expenseObj_removeExpenseButton);
-    expenseObj_Layout->addLayout(expenseObj_addExpenseForm);
-    expenseObj_Layout->addWidget(expenseObj_removeExpenseButtonWidget);
-    expenseObj_ExpenseWidget->setLayout(expenseObj_Layout);
+    expenseObj_removeExpenseHbox->addWidget( expenseObj_removeExpenseButton );
+    expenseObj_Layout->addLayout( expenseObj_addExpenseForm );
+    expenseObj_Layout->addWidget( expenseObj_removeExpenseButtonWidget );
+    expenseObj_ExpenseWidget->setLayout( expenseObj_Layout );
 
-    vbox->addWidget(expenseObj_ExpenseWidget); //adds widget to the vbox
+    vbox->addWidget( expenseObj_ExpenseWidget ); //adds widget to the vbox
 }
 
 
@@ -248,15 +250,16 @@ void BudgetPageExpenses::setCategoryIndex(int index) {
  */
 QString BudgetPageExpenses::to_CSV() {
     QString csv;
-    csv.append(*this->expenseName);
-    csv.append(",");
-    csv.append(*this->expenseDescription);
-    csv.append(",");
-    csv.append(std::to_string(this->quantity));
-    csv.append(",");
-    csv.append(std::to_string(this->price));
-    csv.append(",");
-    csv.append(std::to_string(this->categoryIndex));
+    //adds name, description, quantity price, and category index to the qstring
+    csv.append( * this->expenseName );
+    csv.append( "," );
+    csv.append( * this->expenseDescription );
+    csv.append( "," );
+    csv.append( std::to_string( this->quantity ) );
+    csv.append( "," );
+    csv.append( std::to_string( this->price ) );
+    csv.append( "," );
+    csv.append( std::to_string( this->categoryIndex ) );
     return csv;
 }
 
@@ -265,39 +268,43 @@ QString BudgetPageExpenses::to_CSV() {
  * @param name
  */
 void BudgetPageExpenses::setExpenseName(QString name) {
-    this->expenseName=new QString(name);
-    expenseObj_NameLineEdit->setText(*this->expenseName);
+    this->expenseName = new QString( name );
+    expenseObj_NameLineEdit->setText( * this->expenseName );
 }
+
 /**
  * @brief setter for description
  * @param description
  */
 void BudgetPageExpenses::setExpenseDescription(QString description) {
-    this->expenseDescription=new QString(description);
-    expenseObj_DescriptionLineEdit->setText(*this->expenseDescription);
+    this->expenseDescription = new QString( description );
+    expenseObj_DescriptionLineEdit->setText( * this->expenseDescription );
 }
+
 /**
  * @brief setter for price
  * @param price the price
  */
 void BudgetPageExpenses::setExpensePrice(double price) {
-    this->price=price;
-    this->expenseObj_PriceSpinBox->setValue(this->price);
+    this->price = price;
+    this->expenseObj_PriceSpinBox->setValue( this->price );
 }
+
 /**
  * @brief setter for quantity
  * @param quantity the quantity
  */
 void BudgetPageExpenses::setExpenseQuantity(double quantity) {
-    this->quantity=quantity;
-    this->expenseObj_QuantitySpinBox->setValue(this->quantity);
+    this->quantity = quantity;
+    this->expenseObj_QuantitySpinBox->setValue( this->quantity );
 }
+
 /**
     * @brief setter for categoryindex
     * @param categoryindex the category index
     */
 void BudgetPageExpenses::setCategoryindex(int categoryindex) {
-     this->categoryIndex= categoryindex;
+    this->categoryIndex = categoryindex;
 }
 
 /**
@@ -307,16 +314,16 @@ void BudgetPageExpenses::setCategoryindex(int categoryindex) {
  */
 void BudgetPageExpenses::createUIobjects() {
     //creates UI objects for the expense item
-    expenseObj_ExpenseWidget = new QWidget; //the widget for the expense
-    expenseObj_addExpenseForm = new QFormLayout; //the form layout for the expense
-    expenseObj_Layout = new QVBoxLayout;
-    expenseObj_removeExpenseButtonWidget = new QWidget(); //the widget for the expense remove button
-    expenseObj_NameLineEdit = new QLineEdit; //expense name
-    expenseObj_DescriptionLineEdit = new QLineEdit;
-    expenseObj_QuantitySpinBox = new QDoubleSpinBox;
-    expenseObj_PriceSpinBox = new QDoubleSpinBox;
+    expenseObj_ExpenseWidget             = new QWidget;     //the widget for the expense
+    expenseObj_addExpenseForm            = new QFormLayout; //the form layout for the expense
+    expenseObj_Layout                    = new QVBoxLayout;
+    expenseObj_removeExpenseButtonWidget = new QWidget( ); //the widget for the expense remove button
+    expenseObj_NameLineEdit              = new QLineEdit;  //expense name
+    expenseObj_DescriptionLineEdit       = new QLineEdit;
+    expenseObj_QuantitySpinBox           = new QDoubleSpinBox;
+    expenseObj_PriceSpinBox              = new QDoubleSpinBox;
     //creates UI objects for removing expense buttons/hbox
-    expenseObj_removeExpenseHbox = new QHBoxLayout(expenseObj_removeExpenseButtonWidget);
+    expenseObj_removeExpenseHbox = new QHBoxLayout( expenseObj_removeExpenseButtonWidget );
     //hbox for the expense remove button
-    expenseObj_removeExpenseButton = new QPushButton(tr("Remove")); //the expense remove button
+    expenseObj_removeExpenseButton = new QPushButton( tr( "Remove" ) ); //the expense remove button
 }

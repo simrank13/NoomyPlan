@@ -30,7 +30,7 @@ public:
      * @param parent parent QObject if need\ed
       * @author Katherine R
      */
-    explicit BudgetPageExpenses(QObject *parent = nullptr);
+    explicit BudgetPageExpenses(QObject * parent = nullptr);
 
     /**
      * @brief parametrized constructor for expenses
@@ -42,8 +42,8 @@ public:
      * @param categoryIndex the index of category
       * @author Katherine R
      */
-    BudgetPageExpenses(QObject *parent, const QString &name, const QString &description, double price, double quantity,
-                       int categoryIndex);
+    BudgetPageExpenses(QObject * parent, const QString &name, const QString &description, double price, double quantity,
+                       int       categoryIndex);
 
     /**
      * @brief creates an Expense object from a json
@@ -55,7 +55,7 @@ public:
      *         \n "Quantity" - quantity of items
      *         \n "Category Index" - the index for categorization
      */
-    BudgetPageExpenses(QObject *parent, const QJsonObject &Expense);
+    BudgetPageExpenses(QObject * parent, const QJsonObject &Expense);
 
     /**
      * @brief creates a json with data from expense item, used for offline mode/saving
@@ -73,7 +73,7 @@ public:
      * @return the remove button QPushButton
       * @author Katherine R
      */
-    QPushButton *getRemoveButton();
+    QPushButton * getRemoveButton();
 
     /**
      * @brief getter for expense value
@@ -92,7 +92,7 @@ public:
      * @param vbox VBox to add the UI to
       * @author Katherine R
      */
-    void createExpenseUI(QVBoxLayout *vbox = nullptr);
+    void createExpenseUI(QVBoxLayout * vbox = nullptr);
 
     ~BudgetPageExpenses();
 
@@ -169,21 +169,21 @@ public slots:
 private:
     double price;
     double quantity;
-    int categoryIndex;
+    int    categoryIndex;
 
 private:
-    QString *expenseName;
-    QString *expenseDescription;
-    QWidget *expenseObj_ExpenseWidget;
-    QFormLayout *expenseObj_addExpenseForm;
-    QLineEdit *expenseObj_NameLineEdit;
-    QLineEdit *expenseObj_DescriptionLineEdit;
-    QDoubleSpinBox *expenseObj_QuantitySpinBox;
-    QDoubleSpinBox *expenseObj_PriceSpinBox;
-    QVBoxLayout *expenseObj_Layout;
-    QWidget *expenseObj_removeExpenseButtonWidget;
-    QHBoxLayout *expenseObj_removeExpenseHbox;
-    QPushButton *expenseObj_removeExpenseButton;
+    QString *        expenseName;
+    QString *        expenseDescription;
+    QWidget *        expenseObj_ExpenseWidget;
+    QFormLayout *    expenseObj_addExpenseForm;
+    QLineEdit *      expenseObj_NameLineEdit;
+    QLineEdit *      expenseObj_DescriptionLineEdit;
+    QDoubleSpinBox * expenseObj_QuantitySpinBox;
+    QDoubleSpinBox * expenseObj_PriceSpinBox;
+    QVBoxLayout *    expenseObj_Layout;
+    QWidget *        expenseObj_removeExpenseButtonWidget;
+    QHBoxLayout *    expenseObj_removeExpenseHbox;
+    QPushButton *    expenseObj_removeExpenseButton;
     /**
      *@brief creates the UI objects for BudgetPageExpenses
      *used to eliminate repeated code on constructor
