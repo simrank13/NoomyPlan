@@ -56,7 +56,7 @@ public:
      * @brief saves data for budget in a JSON format
      *
      * @return JSON with the budget data
-        * \n "Budgets" JsonArray contaiting JSONs of BudgetPageBudget
+        * \n "Budgets" JsonArray containing JSONs of BudgetPageBudget
          * \n"Categories" A QJSonArray containing strings of the categories
          * - specified in - @copydoc BudgetPageBudget::to_JSON()
       * @author - Katherine R
@@ -66,7 +66,7 @@ public:
     /**
      * @brief adds json budget for offline/saves
      * imports JSON budget according to to_JSON() and adds them to the page
-     * @param JSON with budget data - needs to be the same as to_JSON()
+     * @param budget JSON with budget data - needs to be the same as to_JSON()
      * "Budgets" Array with BudgetPageBudget JSONS
      * \n defined in @copydoc BudgetPageBudget::to_JSON()
     * @author - Katherine R
@@ -78,7 +78,7 @@ public:
      * @brief getter for the set budget at the current period
      * @return the budgeted amount, double
      */
-    double getBudget();
+    double getBudget() const;
 
     /**
      * @brief getter for the total expense for the budget period
@@ -90,10 +90,10 @@ public:
      * @brief getter for the budget surplus goal at the current period
      * @return the surplus goal, double
      */
-    double getSurplusGoal();
+    double getSurplusGoal() const;
 
     /**
-     * @brief stter for user id
+     * @brief setter for user id
      * @param userId qstring id
      */
     void setCurrentUserId(const QString &userId);
@@ -136,7 +136,7 @@ public slots:
     /**
     * @brief slot detects when budget periods are changed
     * changes the budget object when another budget period is selected I.E (jan, feb, Q1..)
-    * changes the budget label to X Budget - Y, X being quarterly/monthly/yrly, Y being Q1-Q5 jan-dec
+    * changes the budget label to X Budget - Y, X being quarterly/monthly/yearly, Y being Q1-Q5 jan-dec
     * @param index index of changed Combobox
     * @param period M for monthly Q for quarterly
     * @author - Katherine R
@@ -145,7 +145,7 @@ public slots:
 
     /**
     *@brief  creates a new expense category
-    * \n Doesnt do anything if name/description is empty
+    * \n Doesn't do anything if name/description is empty
     * \n shows text saying category already exists if duplicate entry is attempted
     * \n categories are shared with all budget configurations
     * \n creates an expense category UI for every budgetpagebudget
@@ -185,7 +185,7 @@ private slots:
    * the graph contains X bars, 1 per every budget period (4 for quarterly, 12 for monthly, 1 for yearly)
    * negative budgets show as a red bar, while positive budgets show as a black bar
    * \n trying to actually update the variables wouldn't work automatically,
-   * \n so i decided to just add a button to "update" (create a new graph to replace)
+   * \n so I decided to just add a button to "update" (create a new graph to replace)
    * \n plots the financial goal as a green line
    * @author - Katherine R
    */
@@ -194,7 +194,7 @@ private slots:
 
     /**
     * @brief Slot called when a new expense category is detected and creates it
-    * \n Doesnt do anything if it's empty
+    * \n Doesn't do anything if it's empty
     * \n shows text saying category already exists if duplicate entry is attempted
     * \n categories are shared with all budget configurations
     * \n creates an expense category UI for every budgetpagebudget
@@ -222,7 +222,6 @@ private slots:
      * \n file has to follow the same format as the export
      * \n the imported budget replaces any variables or expenses that were saved
      * @copydoc BudgetPageBudget::createBudgetPageCSV
-     * @param filepath the file path of the csv
      */
     void importCSV();
 
@@ -313,7 +312,7 @@ private:
 
     /**
      * @brief creates a scrollable, dynamic list of expenses
-     * \n creates a separate expense area for every BudgetPageBudget, (so that each budget period can have it's own list of expenses)
+     * \n creates a separate expense area for every BudgetPageBudget, (so that each budget period can have its own list of expenses)
      * \n can set the name, desc, price, and count
      * \n calculates total and remaining budget automatically using calculateRemainingBudget
      * @author - Katherine R

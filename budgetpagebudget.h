@@ -198,7 +198,7 @@ public:
      * @brief returns the number of category vboxes in the budgetpage qvector
      * @return the count
      */
-    int getCategoriesCount();
+    int getCategoriesCount() const;
 
     /**
      * @brief creates an expense csv file
@@ -219,19 +219,19 @@ public:
      * \n according to budgetIndex - 0 - yearly (1-4)= Q1-Q4 5-16 = jan-dec
      * @return
      */
-    QString getBudgetPeriodString();
+    QString getBudgetPeriodString() const;
 
     /**
      * setter for budget category name
      * @param newName new name to add
      */
-    void setbudgetCategoryNames(QString newName);
+    void setbudgetCategoryNames(const QString &newName);
 
     /**
     * setter for budget category desc
-    * @param newName new name to add
+    * @param newDescription new name to add
     */
-    void setBudgetCategoryDescriptions(QString newDescription);
+    void setBudgetCategoryDescriptions(const QString &newDescription);
 
 private:
     QVector<BudgetPageExpenses *> expenses; //stores expense items

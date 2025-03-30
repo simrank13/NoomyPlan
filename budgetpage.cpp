@@ -60,7 +60,7 @@ BudgetPage::BudgetPage(QWidget * parent)
  * @brief saves data for budget in a JSON format
  *
  * @return JSON with the budget data
-    * \n "Budgets" JsonArray contaiting JSONs of BudgetPageBudget
+    * \n "Budgets" JsonArray containing JSONs of BudgetPageBudget
      * \n"Categories" A QJSonArray containing strings of the categories
      * - specified in - @copydoc BudgetPageBudget::to_JSON()
   * @author - Katherine R
@@ -470,7 +470,7 @@ void BudgetPage::createExpensesSubPage() {
  * @brief getter for the set budget at the current period
  * @return the budgeted amount, double
  */
-double BudgetPage::getBudget() {
+double BudgetPage::getBudget() const {
     return this->budgetSelector_SpinBox->value( );
 }
 
@@ -486,12 +486,12 @@ double BudgetPage::getTotalExpenses() {
  * @brief getter for the budget surplus goal at the current period
  * @return the surplus goal, double
  */
-double BudgetPage::getSurplusGoal() {
+double BudgetPage::getSurplusGoal() const {
     return this->budgetSelector_goalSpinBox->value( );
 }
 
 /**
-     * @brief stter for user id
+     * @brief setter for user id
      * @param userId qstring id
      */
 void BudgetPage::setCurrentUserId(const QString &userId) {
@@ -578,21 +578,12 @@ void BudgetPage::newExpenseCategory(QString name, QString description) {
                 budget->getExpensescrollarea( expenses_categoriesComboBox->count( ) - 1 )->hide( );
                 budget->getExpensescrollarea( expenses_categoriesComboBox->count( ) - 1 )->setDisabled( true );
             }
-            // //shows the selected category on the current budget page
-            // budgets[budgetPeriodIndex]->getExpensescrollarea(expenses_categoriesComboBox->count() - 1)->show();
-            // budgets[budgetPeriodIndex]->getExpensescrollarea(expenses_categoriesComboBox->count() - 1)->
-            //         setDisabled(false);
-
-            // //changes the category combobox selection to the new one and the category description
-            // expenses_categoriesComboBox->setCurrentIndex(expenses_categoriesComboBox->count() - 1);
-            // expenses_categoryLabel->setText(description);
         } else {
             //gives error if it's already a category
             expenses_categoryNameLineEdit->setText( "Error! category already exists" );
             QMessageBox::StandardButton warning = QMessageBox::warning( this , "warning" ,
                                                                         "Error! category already exists" ,
                                                                         QMessageBox::Ok );
-            // expenses_categoryNameLineEdit->setStyleSheet("background-color: red");
         }
     } else {
         QMessageBox::StandardButton warning = QMessageBox::critical( this , "warning" , "Can't Create Empty Category!" ,
@@ -673,7 +664,7 @@ void BudgetPage::newExpense() {
 /**
  * @brief deletes the expense item provided, removes it from the expenses QVector
  * deletes it from the BudgetPageBudget for the selected budget period
- * \n and calculates snew total expense
+ * \n and calculates new total expense
  * @param toDelete expense item to delete
   * @author - Katherine R
  */
@@ -695,7 +686,7 @@ void BudgetPage::deleteExpense(BudgetPageExpenses * toDelete) {
  * the graph contains X bars, 1 per every budget period (4 for quarterly, 12 for monthly, 1 for yearly)
  * negative budgets show as a red bar, while positive budgets show as a black bar
  * \n trying to actually update the variables wouldn't work automatically,
- * \n so i decided to just add a button to "update" (create a new graph to replace)
+ * \n so I decided to just add a button to "update" (create a new graph to replace)
  * \n plots the financial goal as a green line
   * @author - Katherine R
  */
@@ -729,7 +720,7 @@ void BudgetPage::updateBarGraph() {
     } else {
         rangelow  = 5;
         rangehigh = 16;
-        barChart_xAxis->append( * barChart_categories_Monthly ); //adds months to x axis labeling
+        barChart_xAxis->append( * barChart_categories_Monthly ); //adds months to x-axis labeling
     }
     //adds values from budgets to graph QBarset
     for ( int i = rangelow ; i <= rangehigh ; i++ ) {
@@ -834,6 +825,8 @@ void BudgetPage::createBudgetsCSV() {
         //goes through every budget and creates the csv for it
         budgets.at( i )->createBudgetPageCSV( );
     }
+    //gives messagebox to notify of export success
+    QMessageBox::StandardButton info = QMessageBox::information( this , "CSV Export" , "Export Success!" );
 }
 
 /**
@@ -842,7 +835,6 @@ void BudgetPage::createBudgetsCSV() {
    * \n file has to follow the same format as the export
    * \n the imported budget replaces any variables or expenses that were saved
    * @copydoc BudgetPageBudget::createBudgetPageCSV
-   * @param filepath the file path of the csv
    */
 void BudgetPage::importCSV() {
     //opens file browser to allow user to select file, allows only csv
@@ -886,7 +878,7 @@ void BudgetPage::importCSV() {
             //reads category names and desc, creates categories for them
             QString     line         = in.readLine( );
             QStringList categoryList = line.split( ',' );
-            for ( QString category: categoryList ) {
+            for ( const QString &category: categoryList ) {
                 if ( !category.isNull( ) || !category.isEmpty( ) ) {
                     QStringList temp = category.split( '_' );
                     //splits the category name and description by the '_' separation
@@ -933,6 +925,8 @@ void BudgetPage::importCSV() {
             budgetPeriodIndex = oldIndex;
             changeBudgetPage( );
             changeExpenseCategory( oldExpenseCategoryIndex );
+            //gives messagebox to notify of import success
+            QMessageBox::StandardButton info = QMessageBox::information( this , "CSV import" , "Import Success!" );
         }
     } else {
         //if the csv file isn't expected format

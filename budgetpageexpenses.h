@@ -114,13 +114,13 @@ public:
      * @brief setter for name
      * @param name
      */
-    void setExpenseName(QString name);
+    void setExpenseName(const QString &name);
 
     /**
  * @brief setter for description
  * @param description
  */
-    void setExpenseDescription(QString description);
+    void setExpenseDescription(const QString &description);
 
     /**
  * @brief setter for price

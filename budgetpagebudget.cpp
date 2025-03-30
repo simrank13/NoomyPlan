@@ -294,7 +294,7 @@ void BudgetPageBudget::newExpensescrollArea() {
  * @brief returns the number of category vboxes in the budgetpage qvector
  * @return the count
  */
-int BudgetPageBudget::getCategoriesCount() {
+int BudgetPageBudget::getCategoriesCount() const {
     return budgetObj_expenseScrollListVbox.count();
 }
 
@@ -357,7 +357,7 @@ void BudgetPageBudget::createBudgetPageCSV() {
  * \n according to budgetIndex - 0 - yearly (1-4)= Q1-Q4 (5-16) = jan-dec
  * @return the qstring w the type of budget period
  */
-QString BudgetPageBudget::getBudgetPeriodString() {
+QString BudgetPageBudget::getBudgetPeriodString() const {
     switch (budgetIndex) {
         case 0:
             return "Yearly";
@@ -402,13 +402,13 @@ QString BudgetPageBudget::getBudgetPeriodString() {
  * setter for budget category name
  * @param newName new name to add
  */
-void BudgetPageBudget::setbudgetCategoryNames(QString newName) {
+void BudgetPageBudget::setbudgetCategoryNames(const QString &newName){
     this->budgetCategoryNames->append(newName);
 }
 /**
  * setter for budget category desc
- * @param newName new name to add
+ * @param newDescription new name to add
  */
-void BudgetPageBudget::setBudgetCategoryDescriptions(QString newDescription) {
+void BudgetPageBudget::setBudgetCategoryDescriptions(const QString &newDescription) {
     this->budgetCategoryDescriptions->append(newDescription);
 }

@@ -267,7 +267,7 @@ QString BudgetPageExpenses::to_CSV() {
  * @brief setter for name
  * @param name
  */
-void BudgetPageExpenses::setExpenseName(QString name) {
+void BudgetPageExpenses::setExpenseName(const QString &name) {
     this->expenseName = new QString( name );
     expenseObj_NameLineEdit->setText( * this->expenseName );
 }
@@ -276,7 +276,7 @@ void BudgetPageExpenses::setExpenseName(QString name) {
  * @brief setter for description
  * @param description
  */
-void BudgetPageExpenses::setExpenseDescription(QString description) {
+void BudgetPageExpenses::setExpenseDescription(const QString &description) {
     this->expenseDescription = new QString( description );
     expenseObj_DescriptionLineEdit->setText( * this->expenseDescription );
 }
